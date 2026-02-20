@@ -28,7 +28,6 @@ This system allows anyone who finds a lost pet to scan the QR code on the pet’
 
 * Public pet profile accessible via QR scan
 * Automatic scan history recording
-* IP-based location tracking
 * Real-time owner notification system via Email
 * Emergency contact display
 
@@ -89,8 +88,6 @@ This system allows anyone who finds a lost pet to scan the QR code on the pet’
 
 ### 📍 Location Tracking
 
-* Uses IP-based geolocation API
-* Records approximate scan location
 * Displays scan history to pet owner
 
 ---
@@ -106,8 +103,7 @@ This system allows anyone who finds a lost pet to scan the QR code on the pet’
 | CSS        | Styling               |
 | JavaScript | UI Interaction        |
 | Pillow     | Image Processing      |
-| ReportLab  | PDF Poster Generation |
-| ip-api.com | Location Tracking API |
+| ReportLab  | PDF Poster Generation | |
 
 ---
 
