@@ -1,27 +1,36 @@
-# 🐾 PetQR - Smart Pet Identification System
+# 🐾 Smart Pet QR - Next Gen Pet Safety System
 
 ![Python](https://img.shields.io/badge/Python-3.11+-blue.svg) ![Django](https://img.shields.io/badge/Django-5.0-green.svg) ![Status](https://img.shields.io/badge/Status-Active-success.svg)
 
-**PetQR** is a comprehensive web application designed to safeguard pets using **dynamic QR code technology** and **IoT concepts**. It serves as a digital bridge between lost pets and their owners, offering real-time tracking, instant profile access, and emergency alerts.
+## 🚀 Overview
+**Smart Pet QR** is an innovative web application engineered to bridge the gap between physical pet tags and digital identity using **IoT concepts**. Unlike traditional tags, this system generates **dynamic, trackable QR codes** that offer real-time data, location insights, and medical history access.
+
+Built with **Django**, this project demonstrates advanced backend logic including **Dynamic Image Processing**, **Real-time Geolocation**, and **SMTP Email Notifications**.
 
 ---
 
-## 🚀 Key Features
+## 🌟 Key Features
 
-### 🛡️ For Pet Owners
-- **Dynamic QR Profiles:** Each pet gets a unique QR code. When scanned, it instantly shows a public profile with contact details and critical medical info.
-- **🚨 Panic Button / Lost Mode:** Activate "Lost Mode" to instantly alert the community.
-- **📄 Smart Poster Generation:** One-click generation of a "Missing Pet" poster (PDF) with the pet's photo and QR code (Powered by `ReportLab`).
-- **🏥 Medical Records:** Store and manage vaccination history and medical needs.
+### 1. 🛡️ Intelligent QR Code Generation
+- **Automated Design**: Upon registration, the system automatically generates a unique QR code using `Python` & `Pillow`.
+- **Custom Branding**: The pet’s profile photo is cropped into a circular format and embedded directly into the center of the high-redundancy QR code.
 
-### 🛒 Tag Ordering & Invoicing
-- **Order Tags:** Integrated system to order physical QR tags/collars.
-- **Invoice Generation:** Automatic PDF invoice generation for every order.
-- **Order Tracking:** Track order status (Shipped, Delivered, Cancelled).
+### 2. 📍 Smart Scan Tracking & Alerts
+- **Real-Time Geolocation**: Records the **Timestamp** and **Approximate Location (City/Country)** based on the scanner's IP address.
+- **📩 Email Notifications**: Uses **Django SMTP** to instantly email the owner when their pet is scanned, providing immediate awareness.
+- **Owner Dashboard**: Owners can view a history of all scan attempts to track their pet's last known location.
 
-### 👮 Staff Dashboard
-- **User Management:** Admins can view, edit, or delete users.
-- **Order Management:** Process orders and update statuses efficiently.
+### 3. 🚨 "Lost Mode" Protocol
+- **One-Click Activation**: Pet owners can toggle "Lost Mode" instantly from their dashboard.
+- **Auto-Generated Assets**: The system uses `ReportLab` to instantly generate a printable, high-resolution **PDF Missing Poster** pre-filled with the pet's photo, contact details, and QR code.
+
+### 4. 🏥 Comprehensive Medical Profile & Secure Auth
+- **Medical Info**: Public profile displays critical medical conditions (e.g., "Needs Insulin") and vet contact info.
+- **Secure Authentication**: Robust user profile management with secure login/logout and password handling.
+
+### 5. 🛒 Integrated E-Commerce & Staff Dashboard
+- **Order System**: A specialized module for ordering physical NFC/QR tags.
+- **Admin/Staff Control**: Role-based access control for managing users and pets.
 
 ---
 
@@ -29,17 +38,17 @@
 
 | Component | Technology | Description |
 | :--- | :--- | :--- |
-| **Backend** | **Django 5.0** (Python) | Robust and scalable web framework |
-| **Database** | **SQLite** (Dev) | Relational database management |
-| **Frontend** | **HTML5, CSS3, Bootstrap 5** | Responsive, mobile-first design |
-| **QR Generation** | **qrcode & Pillow** | Dynamic QR code generation with embedded images |
-| **PDF Tools** | **ReportLab** | Programmatic PDF creation for posters & invoices |
+| **Backend** | **Django 5.0** (Python) | Robust, scalable web framework |
+| **Email** | **Django SMTP** | System for sending real-time alerts |
+| **Database** | **SQLite** (Dev) | Relational data management |
+| **Image Processing** | **Pillow (PIL)** | Dynamic image manipulation |
+| **PDF Generation** | **ReportLab** | Programmatic PDF creation |
+| **Geolocation** | **Requests & IP-API** | IP-to-Location conversion service |
+| **Frontend** | **HTML5, CSS3, Bootstrap 5** | Responsive, mobile-first interface |
 
 ---
 
-## ⚙️ Installation Guide
-
-Follow these steps to run the project locally:
+## 🔧 Installation & Setup
 
 1. **Clone the Repository**
    ```bash
@@ -47,10 +56,10 @@ Follow these steps to run the project locally:
    cd -QR-Based-Pet-Identification-System-
    ```
 
-2. **Create Virtual Environment**
+2. **Set Up Virtual Environment**
    ```bash
    python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv/bin/activate  # Windows: venv\Scripts\activate
    ```
 
 3. **Install Dependencies**
@@ -63,7 +72,7 @@ Follow these steps to run the project locally:
    python manage.py migrate
    ```
 
-5. **Start Server**
+5. **Start the Server**
    ```bash
    python manage.py runserver
    ```
@@ -71,12 +80,5 @@ Follow these steps to run the project locally:
 
 ---
 
-## 🤝 Contribution
-
-Contributions are welcome! Feel free to open issues or submit pull requests to improve the project.
-
----
-
 ## 📄 License
-
-This project is open-source and available under the [MIT License](LICENSE).
+This project is licensed under the MIT License.
