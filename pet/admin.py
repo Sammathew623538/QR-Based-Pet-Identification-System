@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Pet, MedicalRecord, ScanHistory, Contact
+from .models import Profile, Pet, MedicalRecord, ScanHistory, Contact, Order, CollarReview
 
 # --- Custom Admin Site Branding ---
 admin.site.site_header = "PetQR Administration"
@@ -92,3 +92,35 @@ class ContactAdmin(admin.ModelAdmin):
     def short_message(self, obj):
         return obj.message[:50] + "..." if len(obj.message) > 50 else obj.message
     short_message.short_description = 'Message Preview'
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'pet', 'design', 'status', 'created_at', 'amount_display')
+    list_filter = ('status', 'design', 'created_at')
+    search_fields = ('user__username', 'pet__name', 'full_name', 'phone_number')
+    readonly_fields = ('created_at',)
+    date_hierarchy = 'created_at'
+    actions = ['mark_shipped', 'mark_delivered', 'mark_cancelled']
+
+    def amount_display(self, obj):
+        # Assuming fixed price for now as it's not in the model
+        return "$29.99" 
+    amount_display.short_description = 'Value'
+
+    @admin.action(description='Mark selected orders as SHIPPED 🚚')
+    def mark_shipped(self, request, queryset):
+        queryset.update(status='Shipped')
+
+    @admin.action(description='Mark selected orders as DELIVERED ✅')
+    def mark_delivered(self, request, queryset):
+        queryset.update(status='Delivered')
+
+    @admin.action(description='Mark selected orders as CANCELLED ❌')
+    def mark_cancelled(self, request, queryset):
+        queryset.update(status='Cancelled')
+
+@admin.register(CollarReview)
+class CollarReviewAdmin(admin.ModelAdmin):
+    list_display = ('user', 'pet', 'rating', 'design', 'created_at')
+    list_filter = ('rating', 'design')
+    search_fields = ('user__username', 'pet__name', 'comment')

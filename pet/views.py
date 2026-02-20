@@ -249,10 +249,12 @@ def staff_dashboard(request):
         'total_users': User.objects.count(),
         'total_pets': Pet.objects.count(),
         'total_scans': ScanHistory.objects.count(),
+        'total_orders': Order.objects.count(),
         'scans_today': ScanHistory.objects.filter(scanned_at__date=today).count(),
         'recent_users': User.objects.order_by('-date_joined')[:5],
         'recent_pets': Pet.objects.order_by('-created_at')[:5],
         'recent_scans': ScanHistory.objects.order_by('-scanned_at')[:5],
+        'recent_orders': Order.objects.order_by('-created_at')[:5],
     }
     return render(request, 'staff_dashboard_v2.html', context)
 

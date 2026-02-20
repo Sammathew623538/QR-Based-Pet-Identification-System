@@ -441,6 +441,71 @@
         </div>
     </div>
 
+    <!-- Recent Orders Section -->
+    <div style="margin-top: 50px;">
+        <h3 class="section-title">Recent Store Orders</h3>
+        <div class="table-container">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Pet Tag</th>
+                            <th>Design</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in recent_orders %}
+                        <tr>
+                            <td data-label="Order ID">
+                                <strong>#ORD-{{ order.id }}</strong>
+                            </td>
+                            <td data-label="Customer">
+                                {{ order.full_name }}<br>
+                                <small style="color: var(--slate);">{{ order.phone_number }}</small>
+                            </td>
+                            <td data-label="Pet Tag">{{ order.pet.name }}</td>
+                            <td data-label="Design">{{ order.design }}</td>
+                            <td data-label="Status">
+                                {% if order.status == 'Delivered' %}
+                                <span class="status-active" style="background: #ecfdf5; color: #10B981;">{{ order.status
+                                    }}</span>
+                                {% elif order.status == 'Cancelled' %}
+                                <span class="status-lost" style="background: #fef2f2; color: #EF4444;">{{ order.status
+                                    }}</span>
+                                {% else %}
+                                <span class="status-active" style="background: #fff7ed; color: #ea580c;">{{ order.status
+                                    }}</span>
+                                {% endif %}
+                            </td>
+                            <td data-label="Date">{{ order.created_at|date:"M d" }}</td>
+                            <td data-label="Action">
+                                <a href="{% url 'order_detail' order.id %}" target="_blank" class="action-btn"
+                                    style="background: #f1f5f9; color: #475569;">
+                                    <i class="fas fa-eye"></i> View
+                                </a>
+                                <a href="/admin/pet/order/{{ order.id }}/change/" target="_blank" class="action-btn"
+                                    style="background: #e0f2fe; color: #0369a1;">
+                                    <i class="fas fa-edit"></i> Manage
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="empty-msg" style="text-align: center; padding: 40px;">No orders
+                                found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
     <div style="margin-top: 50px;">
         <h3 class="section-title">Recent Privacy Scans</h3>
         <div class="table-container">
