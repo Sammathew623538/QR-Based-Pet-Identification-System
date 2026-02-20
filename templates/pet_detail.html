@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load pet_extras %}
+
+{% block title %}Pet Details - {{ pet.name }}{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width: 800px;">
+    <!-- Back Navigation -->
+    <a href="{% url 'dashboard' %}" class="btn btn-link text-decoration-none mb-4 ps-0"
+        style="color: var(--slate); font-weight: 600;">
+        &larr; Back to Dashboard
+    </a>
+
+    <!-- Main Pet Card -->
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="row g-0">
+            <!-- Pet Image Section -->
+            <div class="col-md-5 position-relative bg-light" style="min-height: 300px;">
+                {% if pet.image %}
+                <img src="{{ pet.image|safe_url }}" class="w-100 h-100 object-fit-cover position-absolute top-0 start-0"
+                    alt="{{ pet.name }}">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center h-100 text-muted">
+                    <div class="text-center">
+                        <span style="font-size: 64px;">🐾</span>
+                        <p class="mb-0 fw-bold mt-2">No Image</p>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Pet Details Section -->
+            <div class="col-md-7">
+                <div class="card-body p-4 p-lg-5">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h1 class="fw-bold text-dark mb-0">{{ pet.name }}</h1>
+                        {% if pet.lost_status %}
+                        <span class="badge bg-danger rounded-pill px-3 py-2">LOST</span>
+                        {% else %}
+                        <span class="badge bg-success rounded-pill px-3 py-2">SAFE</span>
+                        {% endif %}
+                    </div>
+
+                    <p class="text-muted fw-medium mb-4">{{ pet.breed }}</p>
+
+                    <div class="vstack gap-3">
+                        <div class="d-flex align-items-center">
+                            <span class="text-secondary fw-bold" style="width: 100px;">Owner:</span>
+                            <span class="text-dark">{{ pet.owner.username }}</span>
+                        </div>
+
+                        <div class="d-flex align-items-center">
+                            <span class="text-secondary fw-bold" style="width: 100px;">Phone:</span>
+                            <a href="tel:{{ pet.owner.profile.phone|default:pet.phone }}"
+                                class="text-decoration-none text-primary fw-bold">
+                                {{ pet.owner.profile.phone|default:"Not provided" }}
+                            </a>
+                        </div>
+
+                        {% if pet.microchip_number %}
+                        <div class="d-flex align-items-center">
+                            <span class="text-secondary fw-bold" style="width: 100px;">Microchip:</span>
+                            <span class="text-dark font-monospace">{{ pet.microchip_number }}</span>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mt-5 d-grid gap-2">
+                        <a href="tel:{{ pet.owner.profile.phone|default:pet.phone }}"
+                            class="btn btn-primary py-3 rounded-3 fw-bold shadow-sm">
+                            📞 Call Owner
+                        </a>
+                        <a href="{% url 'pet_update' pet.pk %}"
+                            class="btn btn-outline-secondary py-2 rounded-3 fw-bold">
+                            Edit Profile
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

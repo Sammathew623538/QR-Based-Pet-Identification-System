@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog – PetQR Safety Journal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF5C00; --dark: #0F172A; --slate: #64748B;
+            --bg: #F8FAFC; --ease: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg); color: var(--dark); line-height: 1.6; }
+
+        /* Reuse Header Styles */
+        header { position: fixed; top: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 8%; background: rgba(248, 250, 252, 0.8); backdrop-filter: blur(16px); z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .logo { font-size: 22px; font-weight: 800; text-decoration: none; color: var(--dark); }
+        .nav-links a { text-decoration: none; color: var(--dark); font-weight: 600; margin-left: 30px; font-size: 14px; }
+
+        /* Blog Hero */
+        .blog-hero { padding: 140px 8% 60px; text-align: center; }
+        .blog-hero h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 800; letter-spacing: -0.03em; }
+        
+        /* Category Bar */
+        .categories { display: flex; justify-content: center; gap: 15px; margin: 40px 0; overflow-x: auto; padding-bottom: 10px; }
+        .cat-btn { padding: 10px 24px; border-radius: 50px; border: 1px solid #E2E8F0; background: white; cursor: pointer; font-weight: 600; transition: 0.3s; white-space: nowrap; }
+        .cat-btn.active { background: var(--dark); color: white; border-color: var(--dark); }
+
+        /* Featured Post */
+        .featured-post { margin: 0 8% 60px; background: white; border-radius: 32px; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; border: 1px solid #E2E8F0; }
+        .featured-img { width: 100%; height: 400px; object-fit: cover; }
+        .featured-content { padding: 60px; display: flex; flex-direction: column; justify-content: center; }
+        .tag { color: var(--primary); font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Blog Grid */
+        .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px; padding: 0 8% 100px; }
+        .post-card { background: white; border-radius: 24px; overflow: hidden; border: 1px solid #E2E8F0; transition: 0.4s var(--ease); text-decoration: none; color: inherit; }
+        .post-card:hover { transform: translateY(-10px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); border-color: var(--primary); }
+        .post-img { width: 100%; height: 220px; object-fit: cover; }
+        .post-body { padding: 30px; }
+        .post-body h3 { font-size: 20px; margin: 10px 0; font-weight: 700; }
+
+        @media (max-width: 968px) {
+            .featured-post { grid-template-columns: 1fr; }
+            .featured-content { padding: 30px; }
+            .nav-links { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <a href="#" class="logo">● PetQR</a>
+    <nav class="nav-links">
+        <a href="#">Solutions</a>
+        <a href="#">Blog</a>
+        <a href="#">Contact</a>
+    </nav>
+</header>
+
+<section class="blog-hero">
+    <h1>Pet Safety <span style="color: var(--primary)">Insights.</span></h1>
+    <div class="categories">
+        <button class="cat-btn active">All Stories</button>
+        <button class="cat-btn">Recovery Tips</button>
+        <button class="cat-btn">Pet Tech</button>
+        <button class="cat-btn">Community</button>
+    </div>
+</section>
+
+<div class="featured-post">
+    <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&q=80&w=1000" class="featured-img" alt="Featured">
+    <div class="featured-content">
+        <span class="tag">Editor's Pick</span>
+        <h2 style="font-size: 32px; margin: 20px 0;">How QR Technology is Revolutionizing Pet Recovery in 2026</h2>
+        <p style="color: var(--slate); margin-bottom: 30px;">Traditional tags are failing. Discover why digital identification is the only way to ensure your pet's return home.</p>
+        <a href="#" style="color: var(--primary); font-weight: 700; text-decoration: none;">Read Full Story →</a>
+    </div>
+</div>
+
+<div class="blog-grid">
+    <a href="#" class="post-card">
+        <img src="https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?auto=format&fit=crop&q=80&w=500" class="post-img">
+        <div class="post-body">
+            <span class="tag">Safety</span>
+            <h3>Top 5 Summer Travel Tips for Dog Owners</h3>
+            <p style="color: var(--slate);">Keep your pet cool and secure during your cross-country adventures...</p>
+        </div>
+    </a>
+    <a href="#" class="post-card">
+        <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&q=80&w=500" class="post-img">
+        <div class="post-body">
+            <span class="tag">Tech</span>
+            <h3>Privacy vs. Security: How we handle your data</h3>
+            <p style="color: var(--slate);">Understanding the PetQR privacy encryption protocol...</p>
+        </div>
+    </a>
+    <a href="#" class="post-card">
+        <img src="https://images.unsplash.com/photo-1534361960057-19889db9621e?auto=format&fit=crop&q=80&w=500" class="post-img">
+        <div class="post-body">
+            <span class="tag">Community</span>
+            <h3>Reunion Story: Max's 200-mile Journey Home</h3>
+            <p style="color: var(--slate);">How a single scan reunited a family after 3 months of searching...</p>
+        </div>
+    </a>
+</div>
+
+</body>
+</html>

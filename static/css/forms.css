@@ -1,0 +1,163 @@
+/* Reuse auth-card style but wider for this form */
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+    padding: 120px 20px 60px;
+    /* Space for fixed header */
+    background: linear-gradient(to bottom, #ffffff, #f8fafc);
+    min-height: 100vh;
+}
+
+.form-card {
+    background: white;
+    width: 100%;
+    max-width: 700px;
+    padding: 40px;
+    border-radius: 32px;
+    box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.form-header h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--dark);
+    margin-bottom: 8px;
+}
+
+.form-header p {
+    color: var(--slate);
+    font-size: 16px;
+}
+
+/* Custom Form Styling replacing Bootstrap/Crispy defaults */
+.asteriskField {
+    color: #EF4444;
+    margin-left: 2px;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+
+label {
+    display: block;
+    font-weight: 700;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--dark);
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border-radius: 14px;
+    border: 1.5px solid #E2E8F0;
+    background: #F8FAFC;
+    font-size: 16px;
+    color: var(--dark);
+    transition: all 0.2s ease;
+    outline: none;
+    font-family: inherit;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary);
+    background: white;
+    box-shadow: 0 0 0 4px rgba(255, 92, 0, 0.1);
+}
+
+/* File Input Styling */
+input[type="file"] {
+    padding: 10px;
+    background: white;
+    border: 2px dashed #E2E8F0;
+    cursor: pointer;
+}
+
+input[type="file"]:hover {
+    border-color: var(--primary);
+}
+
+/* Buttons */
+.btn-submit {
+    width: 100%;
+    background: var(--dark);
+    color: white;
+    padding: 16px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+}
+
+.btn-submit:hover {
+    background: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(255, 92, 0, 0.2);
+}
+
+.btn-cancel {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: var(--slate);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+    transition: color 0.2s;
+}
+
+.btn-cancel:hover {
+    color: var(--dark);
+}
+
+/* Grid Layout for Form Fields */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+@media (max-width: 600px) {
+    .form-wrapper {
+        padding-top: 90px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+
+    .form-card {
+        padding: 30px 20px;
+    }
+}

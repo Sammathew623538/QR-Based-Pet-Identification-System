@@ -1,0 +1,188 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PetQR — How It Works{% endblock %}
+
+{% block content %}
+<!-- Decorative Background Elements -->
+<div
+    style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; pointer-events: none; z-index: -1;">
+    <div
+        style="position: absolute; top: 5%; left: -5%; width: 40%; height: 60%; background: radial-gradient(circle, rgba(251, 100, 27, 0.03) 0%, transparent 70%); filter: blur(100px);">
+    </div>
+    <div
+        style="position: absolute; top: 40%; right: -10%; width: 50%; height: 70%; background: radial-gradient(circle, rgba(251, 100, 27, 0.02) 0%, transparent 70%); filter: blur(120px);">
+    </div>
+</div>
+
+<section class="hero"
+    style="padding-bottom: 40px; text-align: center; display: block; padding-top: calc(var(--header-height, 100px) + 40px);">
+    <div class="hero-content" style="max-width: 800px; margin: 0 auto;">
+        <h1 class="fade-up delay-1">Simple Protection in <br><span class="text-gradient">4 Seamless Steps</span></h1>
+        <p class="fade-up delay-2" style="margin: 0 auto; max-width: 600px; margin-bottom: 30px;">
+            From digital registration to a physical smart tag on your pet's collar. Here is how PetQR keeps your furry
+            friends safe.
+        </p>
+
+    </div>
+</section>
+
+<section class="timeline-section">
+    <div class="timeline-line"></div>
+
+    <!-- Step 1 -->
+    <div class="timeline-item reveal">
+        <div class="timeline-marker">01</div>
+        <div class="timeline-content">
+            <span class="step-number-floating">01</span>
+            <h2>Digital Registration</h2>
+            <p>Start by creating a free account and building a comprehensive digital profile for your pet. Include
+                medical history, diet, and multiple emergency contacts.</p>
+            <div class="pro-feature-list">
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">📁</span>
+                    <span>Detailed Medical & Vet Info</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">👥</span>
+                    <span>Multiple Emergency Contacts</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">🍖</span>
+                    <span>Dietary & Behavior Notes</span>
+                </div>
+            </div>
+        </div>
+        <div class="timeline-visual">
+            <img src="https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?q=80&w=1000&auto=format&fit=crop"
+                alt="Digital Registration">
+        </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="timeline-item reveal">
+        <div class="timeline-marker">02</div>
+        <div class="timeline-content">
+            <span class="step-number-floating">02</span>
+            <h2>Get Your Smart Tag</h2>
+            <p>Two ways to protect: <b>Download instantly</b> for free to print at home, or <b>Order a Premium
+                    Collar</b> directly from your dashboard.</p>
+            <div class="pro-feature-list">
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">📄</span>
+                    <span>Free Instant PDF Download</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">🏷️</span>
+                    <span>Premium Durable Collars</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">🌐</span>
+                    <span>Worldwide Shipping</span>
+                </div>
+            </div>
+        </div>
+        <div class="timeline-visual">
+            <img src="https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?q=80&w=1000&auto=format&fit=crop"
+                alt="Smart Tag Order">
+        </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="timeline-item reveal">
+        <div class="timeline-marker">03</div>
+        <div class="timeline-content">
+            <span class="step-number-floating">03</span>
+            <h2>Pre-Activated Security</h2>
+            <p>No complicated setup needed. Your QR code is <b>automatically linked</b> to your pet's profile the moment
+                it's generated. Just attach it and you're good to go.</p>
+            <div class="pro-feature-list">
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">⚡</span>
+                    <span>Zero Setup Required</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">📱</span>
+                    <span>No Apps Needed to Scan</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">✅</span>
+                    <span>Works Instantly</span>
+                </div>
+            </div>
+        </div>
+        <div class="timeline-visual">
+            <img src="https://images.unsplash.com/photo-1534361960057-19889db9621e?q=80&w=1000&auto=format&fit=crop"
+                alt="Instant Activation">
+        </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="timeline-item reveal">
+        <div class="timeline-marker">04</div>
+        <div class="timeline-content">
+            <span class="step-number-floating">04</span>
+            <h2>Lost Mode & Recovery</h2>
+            <p>If your pet goes missing, activate <b>Lost Mode</b> to show a high-priority alert on your pet's profile.
+                Finders can call or WhatsApp you instantly.</p>
+            <div class="pro-feature-list">
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">🚨</span>
+                    <span>High-Priority LOST Banner</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">💬</span>
+                    <span>One-Click Call & WhatsApp</span>
+                </div>
+                <div class="pro-feature-item">
+                    <span class="pro-feature-icon">🏥</span>
+                    <span>Critical Medical Info Display</span>
+                </div>
+            </div>
+        </div>
+        <div class="timeline-visual">
+            <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1000&auto=format&fit=crop"
+                alt="Lost Mode Recovery">
+        </div>
+    </div>
+</section>
+
+<section class="benefits-section">
+    <div class="container text-center">
+        <h2 class="fade-up">Why Choose <span class="text-gradient">PetQR</span>?</h2>
+        <div class="benefits-grid">
+            <div class="benefit-card reveal">
+                <div class="benefit-icon-wrapper">🛡️</div>
+                <h3>Lifetime Guarantee</h3>
+                <p>Our smart tags are battery-free and built to last a lifetime of adventures.</p>
+            </div>
+            <div class="benefit-card reveal delay-1">
+                <div class="benefit-icon-wrapper">📍</div>
+                <h3>Detailed Medical Profile</h3>
+                <p>Ensure your pet gets the right care with visible vet info, medications, and dietary needs.</p>
+            </div>
+            <div class="benefit-card reveal delay-2">
+                <div class="benefit-icon-wrapper">📞</div>
+                <h3>Direct Contact</h3>
+                <p>Finders can reach you immediately via Phone or WhatsApp with a single tap.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-padding text-center">
+    <div class="reveal">
+        <h3 style="margin-bottom: 20px; font-size: 28px; font-weight: 800;">Ready to Protect Your Best Friend?</h3>
+        <p style="color: var(--slate); margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto;">
+            Join thousands of smart pet owners and get your digital profile and smart tag today.
+        </p>
+        <div class="cta-buttons-group">
+            <a href="{% url 'regi' %}" class="btn-primary">Get Started Now</a>
+            <a href="{% url 'home' %}" class="btn-secondary">Learn More</a>
+            <a href="{% static 'docs/PetQR_Brochure.pdf' %}" class="btn-secondary" download>
+                <i class="fas fa-download" style="margin-right: 8px;"></i>Download Brochure
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

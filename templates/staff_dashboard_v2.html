@@ -1,0 +1,485 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .staff-dashboard {
+        padding: 100px 5% 60px;
+        background: #F8FAFC;
+        min-height: 100vh;
+    }
+
+    @media (max-width: 768px) {
+        .staff-dashboard {
+            padding: 80px 16px 40px;
+        }
+    }
+
+    .dashboard-header {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+
+    .dashboard-header h1 {
+        font-size: clamp(24px, 5vw, 32px);
+        font-weight: 800;
+        color: var(--dark);
+        margin-bottom: 4px;
+        line-height: 1.2;
+    }
+
+    .badge-staff {
+        background: var(--dark);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: inline-block;
+        margin-left: 5px;
+        vertical-align: middle;
+    }
+
+    /* Stats Grid Responsiveness */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 40px;
+    }
+
+    @media (max-width: 576px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+    }
+
+    .stat-card {
+        background: white;
+        padding: 24px;
+        border-radius: 16px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .stat-card>div:last-child {
+        flex: 1;
+    }
+
+    .stat-title {
+        color: var(--slate);
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--primary);
+        line-height: 1;
+    }
+
+    .stat-icon {
+        font-size: 32px;
+        width: 60px;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #F1F5F9;
+        border-radius: 12px;
+    }
+
+    /* Section Layout */
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: var(--dark);
+        border-left: 4px solid var(--primary);
+        padding-left: 16px;
+    }
+
+    .grid-2-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+    }
+
+    @media(max-width: 1024px) {
+        .grid-2-col {
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+    }
+
+    /* Tables & Responsive Wrapper */
+    .table-container {
+        background: white;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        overflow: hidden;
+    }
+
+    .table-responsive {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 16px 24px;
+        background: #F8FAFC;
+        color: var(--slate);
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-bottom: 1px solid #edf2f7;
+    }
+
+    td {
+        padding: 16px 24px;
+        border-bottom: 1px solid #F1F5F9;
+        color: var(--dark);
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .status-active,
+    .status-lost {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 20px;
+        font-weight: 700;
+        display: inline-block;
+    }
+
+    .status-active {
+        background: #ecfdf5;
+        color: #10B981;
+    }
+
+    .status-lost {
+        background: #fef2f2;
+        color: #EF4444;
+    }
+
+    .action-btn {
+        padding: 8px 14px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        white-space: nowrap;
+        border: none;
+        cursor: pointer;
+    }
+
+    .action-btn:hover {
+        transform: translateY(-2px);
+        filter: brightness(0.95);
+    }
+
+    /* Responsive Table - Card View for Mobile */
+    @media (max-width: 768px) {
+        .table-container {
+            background: transparent;
+            box-shadow: none;
+            border: none;
+            overflow: visible;
+        }
+
+        .table-responsive {
+            overflow-x: visible;
+        }
+
+        table {
+            display: block;
+            width: 100%;
+            min-width: 0;
+        }
+
+        thead {
+            display: none;
+        }
+
+        tbody {
+            display: block;
+            width: 100%;
+        }
+
+        tr {
+            display: block;
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            padding: 16px;
+        }
+
+        td {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #F1F5F9;
+            text-align: right;
+            font-size: 14px;
+        }
+
+        td:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+            padding-top: 15px;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        td::before {
+            content: attr(data-label);
+            font-weight: 700;
+            color: var(--slate);
+            font-size: 12px;
+            text-transform: uppercase;
+            text-align: left;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .action-btn {
+            padding: 10px 16px;
+            font-size: 14px;
+        }
+
+        .d-flex {
+            justify-content: flex-end;
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="staff-dashboard">
+    <div class="dashboard-header">
+        <div>
+            <h1>Admin Dashboard <span class="badge-staff">Superuser</span></h1>
+            <p style="color: var(--slate);">Site Overview & Management Control Center</p>
+        </div>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="stats-grid">
+        <a href="{% url 'staff_users_list' %}" class="stat-card"
+            style="text-decoration: none; color: inherit; cursor: pointer;">
+            <span class="stat-icon">👥</span>
+            <div>
+                <div class="stat-title">Total Users</div>
+                <div class="stat-value">{{ total_users }}</div>
+            </div>
+        </a>
+        <div class="stat-card">
+            <span class="stat-icon">🐾</span>
+            <div>
+                <div class="stat-title">Total Pets Protected</div>
+                <div class="stat-value">{{ total_pets }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">📱</span>
+            <div>
+                <div class="stat-title">Total Scans Recorded</div>
+                <div class="stat-value">{{ total_scans }}</div>
+            </div>
+        </div>
+        <div class="stat-card" style="background: var(--dark); color: white;">
+            <span class="stat-icon">📅</span>
+            <div>
+                <div class="stat-title" style="color: #94A3B8;">Scans Today</div>
+                <div class="stat-value" style="color: #4ADE80; font-size: 32px;">{{ scans_today }}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2-col">
+        <!-- Recent Pets -->
+        <div>
+            <h3 class="section-title">Newest Pets Added</h3>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Pet Name</th>
+                                <th>Owner</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for pet in recent_pets %}
+                            <tr>
+                                <td data-label="Pet Name">
+                                    <strong>{{ pet.name }}</strong>
+                                    <br><small style="color: var(--slate);">{{ pet.breed }}</small>
+                                </td>
+                                <td data-label="Owner">{{ pet.owner.username }}</td>
+                                <td data-label="Status">
+                                    {% if pet.lost_status %}
+                                    <span class="status-lost">LOST 🚨</span>
+                                    {% else %}
+                                    <span class="status-active">Safe</span>
+                                    {% endif %}
+                                </td>
+                                <td data-label="Date">{{ pet.created_at|date:"M d" }}</td>
+                                <td data-label="Action">
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'pet_update' pet.id %}" class="action-btn"
+                                            style="background: #e0f2fe; color: #0369a1;">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="{% url 'pet_delete' pet.id %}" class="action-btn"
+                                            style="background: #fee2e2; color: #b91c1c;">
+                                            <i class="fas fa-trash"></i> Delete
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="5" class="empty-msg" style="text-align: center; padding: 40px;">No pets
+                                    found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div>
+            <h3 class="section-title">Newest Users</h3>
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Joined</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in recent_users %}
+                            <tr>
+                                <td data-label="Username">
+                                    <strong>{{ user.username }}</strong>
+                                </td>
+                                <td data-label="Email">{{ user.email }}</td>
+                                <td data-label="Joined">{{ user.date_joined|date:"M d" }}</td>
+                                <td data-label="Action">
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'staff_edit_user' user.id %}" class="action-btn"
+                                            style="background: #e0f2fe; color: #0369a1; padding: 6px 10px;">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        <a href="/admin/auth/user/{{ user.id }}/change/" target="_blank"
+                                            class="action-btn"
+                                            style="background: #f1f5f9; color: #475569; padding: 6px 10px;">
+                                            <i class="fas fa-external-link-alt"></i> Detail
+                                        </a>
+                                        {% if not user.is_staff %}
+                                        <form action="{% url 'staff_delete_user' user.id %}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete this user?');"
+                                            style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="action-btn"
+                                                style="background: #fee2e2; color: #b91c1c; border: none; padding: 6px 10px;">
+                                                <i class="fas fa-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="empty-msg" style="text-align: center; padding: 40px;">No users
+                                    found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 50px;">
+        <h3 class="section-title">Recent Privacy Scans</h3>
+        <div class="table-container">
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Pet Scanned</th>
+                            <th>Location Estimate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for scan in recent_scans %}
+                        <tr>
+                            <td data-label="Time">{{ scan.scanned_at|timesince }} ago</td>
+                            <td data-label="Pet Scanned">
+                                <a href="{% url 'pet_detail_public' scan.pet.unique_slug %}" target="_blank"
+                                    class="fw-bold text-primary text-decoration-none">{{ scan.pet.name }}</a>
+                            </td>
+                            <td data-label="Location">
+                                {% if scan.location %}
+                                <span class="text-truncate d-inline-block" style="max-width: 250px;">{{ scan.location
+                                    }}</span>
+                                {% else %}
+                                <span class="text-muted">Unknown</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="3" class="empty-msg" style="text-align: center; padding: 40px;">No recent scans
+                                recorded.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,1082 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Profile | PetQR{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1.0">
+{% endblock %}
+
+{% block content %}
+<div class="container py-3 py-lg-5" style="padding-top: var(--header-height, 120px) !important; min-height: 80vh;">
+    <div class="row g-4">
+        <!-- Sidebar Navigation (Desktop) -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="card border-0 shadow-sm rounded-1 overflow-hidden sticky-top" style="top: 100px;">
+                <!-- User Profile Summary -->
+                <div class="p-3 bg-white border-bottom d-flex align-items-center">
+                    <div class="position-relative me-3">
+                        <div class="profile-img-container">
+                            {% if user.profile.image %}
+                            <img src="{{ user.profile.image.url }}" class="rounded-circle border" width="50" height="50"
+                                style="object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-secondary border"
+                                style="width: 50px; height: 50px; font-size: 1.5rem;">
+                                👤
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'edit_profile' %}" class="profile-img-edit-overlay">
+                                <i class="fas fa-camera"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="min-width-0">
+                        <p class="text-muted mb-0 small" style="font-size: 11px;">Hello,</p>
+                        <h6 class="mb-0 fw-bold text-dark text-truncate">{{ user.username }}</h6>
+                    </div>
+                </div>
+
+                <div class="list-group list-group-flush py-1">
+                    <!-- My Orders / Assets Segment -->
+                    <a href="{% url 'dashboard' %}"
+                        class="list-group-item border-0 py-3 bg-white d-flex align-items-center text-decoration-none">
+                        <div class="sidebar-icon-box text-primary me-3"><i class="fas fa-folder"></i></div>
+                        <div class="fw-bold text-muted text-uppercase" style="font-size: 12px; letter-spacing: 0.5px;">
+                            My Assets</div>
+                        <i class="fas fa-chevron-right ms-auto text-light-gray" style="font-size: 10px;"></i>
+                    </a>
+                    <a href="{% url 'dashboard' %}"
+                        class="list-group-item list-group-item-action border-0 py-2 ps-5 text-dark small d-flex justify-content-between align-items-center {% if '/dashboard/' in request.path %}active-sidebar{% endif %}">
+                        <span>My Registered Pets</span>
+                    </a>
+
+                    <div class="border-top"></div>
+
+                    <!-- Account Settings Segment -->
+                    <a href="{% url 'profile' %}"
+                        class="list-group-item border-0 py-3 bg-white d-flex align-items-center text-decoration-none">
+                        <div class="sidebar-icon-box text-primary me-3"><i class="fas fa-user"></i></div>
+                        <div class="fw-bold text-muted text-uppercase" style="font-size: 12px; letter-spacing: 0.5px;">
+                            Account Settings</div>
+                        <i class="fas fa-chevron-right ms-auto text-light-gray" style="font-size: 10px;"></i>
+                    </a>
+                    <a href="{% url 'profile' %}"
+                        class="list-group-item list-group-item-action border-0 py-2 ps-5 small mb-1 {% if request.path == '/profile/' %}active-sidebar{% else %}text-dark{% endif %}">Profile
+                        Information</a>
+                    <a href="{% url 'edit_profile' %}"
+                        class="list-group-item list-group-item-action border-0 py-2 ps-5 small mb-1 {% if '/profile/edit/' in request.path %}active-sidebar{% else %}text-dark{% endif %}">Edit
+                        Profile</a>
+
+                    <div class="border-top"></div>
+
+                    <!-- Logout -->
+                    <a href="{% url 'logout' %}"
+                        class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center text-danger fw-bold">
+                        <div class="sidebar-icon-box me-3"><i class="fas fa-power-off"></i></div>
+                        <span>Logout</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="mt-4 p-3 bg-white shadow-sm rounded-1 d-flex align-items-center border professional-tip">
+                <span class="me-3 fs-4">🛡️</span>
+                <div class="min-width-0">
+                    <h6 class="mb-0 fw-bold text-dark small" style="font-size: 12px;">Data Privacy</h6>
+                    <p class="mb-0 text-muted" style="font-size: 10px;">Your data is protected and never sold.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-9 col-md-12">
+            <!-- Professional Mobile Profile Header -->
+            <div class="d-lg-none mb-0">
+                <div class="mobile-profile-header p-4 shadow-sm d-flex align-items-center text-white"
+                    style="background: linear-gradient(135deg, #2874f0 0%, #1a5cbf 100%); position: relative; overflow: hidden; border-radius: 0 !important; padding-top: 100px !important;">
+                    <!-- Decorative Background Element -->
+                    <div
+                        style="position: absolute; top: -20px; right: -20px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;">
+                    </div>
+
+                    <div class="me-3 position-relative z-1">
+                        <div style="width: 70px; height: 70px;">
+                            {% if user.profile.image %}
+                            <img src="{{ user.profile.image.url }}" class="rounded-circle border border-2 border-white"
+                                width="70" height="70"
+                                style="object-fit: cover; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                            {% else %}
+                            <div class="rounded-circle bg-white d-flex align-items-center justify-content-center text-primary border border-2 border-white shadow-sm"
+                                style="width: 70px; height: 70px; font-size: 2rem;">
+                                👤
+                            </div>
+                            {% endif %}
+                            <a href="{% url 'edit_profile' %}"
+                                class="position-absolute bottom-0 end-0 bg-white rounded-circle d-flex align-items-center justify-content-center border shadow-sm"
+                                style="width: 24px; height: 24px; color: #2874f0; font-size: 12px; text-decoration: none;">
+                                <i class="fas fa-camera"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="z-1">
+                        <h5 class="mb-1 fw-bold text-white display-font" style="font-size: 20px;">{{ user.username }}
+                        </h5>
+                        <p class="mb-0 text-white-50 small" style="font-size: 13px;">{{ user.email }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mobile Tabs Navigation -->
+            <div class="d-lg-none mb-0 bg-white shadow-sm rounded-1 sticky-top mobile-tabs"
+                style="top: 80px; z-index: 10;">
+                <div class="d-flex justify-content-between p-1">
+                    <a href="#personal-info"
+                        class="flex-fill text-center py-2 text-decoration-none fw-bold small text-primary border-bottom border-primary border-2">
+                        <i class="fas fa-user-circle mb-1 d-block" style="font-size: 16px;"></i> Info
+                    </a>
+                    <a href="#pets-section"
+                        class="flex-fill text-center py-2 text-decoration-none fw-bold small text-muted">
+                        <i class="fas fa-paw mb-1 d-block" style="font-size: 16px;"></i> Pets
+                    </a>
+                    <a href="{% url 'edit_profile' %}"
+                        class="flex-fill text-center py-2 text-decoration-none fw-bold small text-muted">
+                        <i class="fas fa-cog mb-1 d-block" style="font-size: 16px;"></i> Edit
+                    </a>
+                    <a href="{% url 'logout' %}"
+                        class="flex-fill text-center py-2 text-decoration-none fw-bold small text-muted">
+                        <i class="fas fa-sign-out-alt mb-1 d-block" style="font-size: 16px;"></i> Logout
+                    </a>
+                </div>
+            </div>
+
+            <!-- Profile Info Blocks -->
+            <div class="bg-white shadow-sm rounded-1 overflow-hidden border mb-4">
+                <!-- Segment: Personal Information -->
+                <div id="personal-info" class="p-4 border-bottom position-relative hover-segment">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 fw-bold text-dark section-title">Personal Information</h5>
+                        <a href="{% url 'edit_profile' %}"
+                            class="text-primary fw-bold text-decoration-none small edit-link">Edit</a>
+                    </div>
+                    <div class="row g-4 align-items-end">
+                        <div class="col-md-5">
+                            <div class="form-group mb-0">
+                                <label class="text-muted small mb-2 fw-bold text-uppercase field-label">First
+                                    Name</label>
+                                <div class="bg-light p-3 border-0 rounded text-dark fw-bold data-box">
+                                    {{ user.first_name|default:user.username }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-5">
+                            <div class="form-group mb-0">
+                                <label class="text-muted small mb-2 fw-bold text-uppercase field-label">Last
+                                    Name</label>
+                                <div class="bg-light p-3 border-0 rounded text-dark fw-bold data-box">
+                                    {{ user.last_name|default:'-' }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segment: Email Address -->
+                <div class="p-4 border-bottom position-relative hover-segment">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 fw-bold text-dark section-title">Email Address</h5>
+                        <a href="{% url 'edit_profile' %}"
+                            class="text-primary fw-bold text-decoration-none small edit-link">Edit</a>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-md-5">
+                            <div class="bg-light p-3 border-0 rounded text-dark fw-bold data-box">
+                                {{ user.email }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Segment: Mobile Number -->
+                <div class="p-4 border-bottom position-relative hover-segment">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 fw-bold text-dark section-title">Mobile Number</h5>
+                        <a href="{% url 'edit_profile' %}"
+                            class="text-primary fw-bold text-decoration-none small edit-link">Edit</a>
+                    </div>
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-5">
+                            <div
+                                class="bg-light p-3 border-0 rounded text-dark fw-bold data-box d-flex align-items-center">
+                                <span class="me-2">📱</span> {{ user.profile.phone|default:"Not provided" }}
+                            </div>
+                        </div>
+                        {% if user.profile.phone %}
+                        <div class="col-md-auto ps-lg-0">
+                            <span class="text-success small fw-bold"><i class="fas fa-check-circle me-1"></i>
+                                Verified</span>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Segment: Full Address -->
+                <div class="p-4 position-relative hover-segment">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h5 class="mb-0 fw-bold text-dark section-title">Full Address</h5>
+                        <a href="{% url 'edit_profile' %}"
+                            class="text-primary fw-bold text-decoration-none small edit-link">Edit</a>
+                    </div>
+                    <div class="row g-4">
+                        <div class="col-12">
+                            <div class="bg-light p-3 border-0 rounded text-dark fw-bold data-box"
+                                style="min-height: 80px;">
+                                {{ user.profile.address|default:"Not provided" }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Segment: Registered Pets (Added for Mobile Perfection) -->
+            <div id="pets-section" class="mb-4 pt-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="text-muted fw-bold mb-0 small text-uppercase" style="letter-spacing: 1px;">My Registered
+                        Pets</h6>
+                    <a href="{% url 'pet_create' %}" class="btn btn-sm btn-primary rounded-1 px-3 fw-bold">+ New Pet</a>
+                </div>
+
+                <div class="row g-3">
+                    {% for pet in pets %}
+                    <div class="col-md-6">
+                        <div class="pet-card bg-white p-3 border shadow-sm rounded-1" style="height: auto;">
+                            {% if pet.lost_status %}
+                            <div class="lost-banner"
+                                style="position: absolute; top: 0; left: 0; right: 0; font-size: 10px; padding: 4px; background: #fb641b; color: white; text-align: center; font-weight: bold;">
+                                LOST MODE ACTIVE</div>
+                            {% endif %}
+
+                            <div class="d-flex align-items-center gap-3 mb-3 {% if pet.lost_status %}mt-3{% endif %}">
+                                {% if pet.image %}
+                                <img src="{{ pet.image.url }}" class="rounded-circle border" width="45" height="45"
+                                    style="object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-secondary border"
+                                    style="width: 45px; height: 45px;">🐾</div>
+                                {% endif %}
+                                <div class="min-width-0">
+                                    <h6 class="mb-0 fw-bold text-dark text-truncate">{{ pet.name }}</h6>
+                                    <p class="mb-0 text-muted small">{{ pet.breed|default:"Unknown Breed" }}</p>
+                                </div>
+                            </div>
+
+                            <div class="pet-card-actions">
+                                <div class="action-row main-actions">
+                                    <button class="btn-action qr-btn qr-modal-trigger"
+                                        data-image="{% if pet.image %}{{ pet.image.url }}{% endif %}"
+                                        data-qr="{% if pet.qr_code_image %}{{ pet.qr_code_image.url }}{% endif %}"
+                                        data-download="{% url 'download_qr' pet.pk %}" data-name="{{ pet.name }}"
+                                        data-id="{{ pet.pk }}">
+                                        <i class="fas fa-qrcode"></i> View QR
+                                    </button>
+                                    <a href="{% url 'medical_records' pet.pk %}" class="btn-action hub-btn">
+                                        <i class="fas fa-file-medical"></i> Hub
+                                    </a>
+                                </div>
+                                <div class="action-row sub-actions">
+                                    <a href="{% url 'pet_update' pet.pk %}" class="btn-sub edit-btn">
+                                        <i class="fas fa-pen"></i> Edit
+                                    </a>
+                                    <a href="{% url 'pet_delete' pet.pk %}" class="btn-sub delete-btn">
+                                        <i class="fas fa-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-12">
+                        <div class="p-4 bg-white border shadow-sm rounded-1 text-center">
+                            <p class="text-muted small mb-0">No pets added yet. Protection starts here!</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- FAQ Section -->
+            <div class="mb-4">
+                <h6 class="text-muted fw-bold mb-3 small text-uppercase" style="letter-spacing: 1px;">FAQs</h6>
+                <div class="accordion accordion-flush bg-white border shadow-sm rounded-1" id="faqAccordion">
+                    <div class="accordion-item border-bottom">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-3 fw-bold small text-dark" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq1">
+                                What happens when my profile information is updated?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted small">
+                                Your changes will be reflected across all linked QR tags instantly. This ensures that
+                                anyone scanning your pet's tag always reaches your current contact info.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed py-3 fw-bold small text-dark" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Is my data secure?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body text-muted small">
+                                Yes, PetQR uses industry-standard encryption to protect your personal data. We only
+                                share the information you choose to display on the public pet profile.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deactivate Account -->
+            <div class="mt-5 mb-4 p-3 border rounded-1 bg-white shadow-sm d-flex justify-content-between align-items-center cursor-pointer"
+                data-bs-toggle="modal" data-bs-target="#deactivateModal">
+                <span class="text-danger fw-bold small">Deactivate Account</span>
+                <i class="fas fa-chevron-right text-muted small"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deactivateModal" tabindex="-1" aria-labelledby="deactivateModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-1 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="deactivateModalLabel">Deactivate Account?</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-4 text-center">
+                <div class="display-1 text-danger mb-3">⚠️</div>
+                <p>This will delete your account and all data forever. <strong>Are you sure?</strong></p>
+                <div class="p-3 bg-light rounded-1 text-start">
+                    <ul class="small text-secondary mb-0">
+                        <li>All registered pets will be deleted</li>
+                        <li>QR codes will stop working</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0 gap-2 pb-4">
+                <button type="button" class="btn btn-light border fw-bold px-4 flex-grow-1" data-bs-dismiss="modal">KEEP
+                    ACCOUNT</button>
+                <form action="{% url 'deactivate_account' %}" method="POST" class="flex-grow-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger fw-bold px-4 w-100"
+                        style="background: #fb641b; border: none;">YES, DELETE</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: #f1f3f6;
+        font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    /* Sidebar Polish */
+    .active-sidebar {
+        background-color: #f5faff !important;
+        color: #2874f0 !important;
+        font-weight: 700;
+        border-right: 4px solid #2874f0 !important;
+    }
+
+    .sidebar-icon-box {
+        width: 25px;
+        display: inline-block;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .text-light-gray {
+        color: #d4d4d4;
+    }
+
+    /* Segment Polish */
+    .section-title {
+        font-size: 18px;
+        color: #212121 !important;
+    }
+
+    .field-label {
+        font-size: 12px;
+        color: #878787 !important;
+        letter-spacing: 0.2px;
+    }
+
+    .data-box {
+        font-size: 14px;
+        background-color: #fcfcfc !important;
+        cursor: default;
+    }
+
+    .bg-white.shadow-sm {
+        border: none !important;
+        border-radius: 2px !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1) !important;
+    }
+
+    .hover-segment:hover .edit-link {
+        opacity: 1;
+    }
+
+    .edit-link {
+        transition: opacity 0.2s;
+        opacity: 0.8;
+    }
+
+    .cursor-pointer {
+        cursor: pointer;
+    }
+
+    /* Profile Image Camera Polish */
+    .profile-img-container {
+        position: relative;
+        width: 50px;
+        height: 50px;
+    }
+
+    .profile-img-edit-overlay {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 50%;
+        width: 18px;
+        height: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 8px;
+        color: #2874f0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        border: 1px solid #eee;
+        text-decoration: none;
+    }
+
+    /* FAQ Accordion Polish */
+    .accordion-button:not(.collapsed) {
+        background-color: transparent;
+        color: #2874f0;
+        box-shadow: none;
+    }
+
+    .accordion-button::after {
+        background-size: 12px;
+    }
+
+    /* Action Buttons Polish - Matching Dashboard Palette */
+    .pet-card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .action-row {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-action {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        padding: 8px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: 1px solid #dfdfdf;
+        background: #fff;
+        color: #212121;
+        cursor: pointer;
+    }
+
+    .btn-action i {
+        font-size: 12px;
+    }
+
+    .qr-btn {
+        background: #2874f0;
+        border-color: #2874f0;
+        color: #fff;
+    }
+
+    .qr-btn:hover {
+        background: #1e62d0;
+        border-color: #1e62d0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        color: #fff;
+    }
+
+    .hub-btn:hover {
+        background: #f5faff;
+        border-color: #2874f0;
+        color: #2874f0;
+    }
+
+    .btn-sub {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 6px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        text-decoration: none;
+        color: #878787;
+        border: 1px solid #f0f0f0;
+        transition: 0.2s;
+    }
+
+    .btn-sub:hover {
+        background: #f8f8f8;
+        color: #212121;
+    }
+
+    .delete-btn:hover {
+        color: #dc2626;
+        border-color: #dc262633;
+        background: #fef2f2;
+    }
+
+    @media (max-width: 576px) {
+        .action-row {
+            flex-direction: row;
+        }
+
+        .btn-action,
+        .btn-sub {
+            padding: 10px 5px;
+            font-size: 13px;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .edit-link {
+            opacity: 1;
+        }
+
+        .section-title {
+            font-size: 16px;
+        }
+
+        .data-box {
+            font-size: 13px;
+        }
+
+        .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+            max-width: 100% !important;
+            padding-top: 0px !important;
+            /* Removed padding completely to merge with header */
+        }
+    }
+
+    /* QR Modal Styles */
+    .qr-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(8px);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    .qr-modal-overlay.active {
+        display: flex;
+        opacity: 1;
+    }
+
+    .qr-modal-content {
+        background: white;
+        width: 90%;
+        max-width: 400px;
+        padding: 30px;
+        border-radius: 20px;
+        position: relative;
+        text-align: center;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        transform: translateY(20px);
+        transition: transform 0.3s ease;
+    }
+
+    .qr-modal-overlay.active .qr-modal-content {
+        transform: translateY(0);
+    }
+
+    .close-modal {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: #f1f3f6;
+        border: none;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        font-size: 20px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #666;
+        transition: background 0.2s;
+    }
+
+    .close-modal:hover {
+        background: #e2e8f0;
+        color: #000;
+    }
+
+    .qr-spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #2874f0;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 20px auto;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    .qr-image-container {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        border: 1px solid #f1f5f9;
+        display: inline-block;
+    }
+
+    .qr-image-container img {
+        max-width: 200px;
+        height: auto;
+    }
+
+    .modal-action-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .modal-action-grid .btn-primary,
+    .modal-action-grid .btn-secondary {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 12px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+
+    .modal-action-grid .btn-primary {
+        background: #000;
+        color: #fff;
+    }
+
+    .modal-action-grid .btn-secondary {
+        background: #fff;
+        color: #000;
+        border: 1px solid #e2e8f0;
+    }
+
+    @media (max-width: 480px) {
+        .modal-action-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .qr-modal-content {
+            padding: 20px;
+            width: 95%;
+        }
+
+        .qr-image-container {
+            padding: 15px;
+        }
+
+        .qr-image-container img {
+            max-width: 160px;
+        }
+    }
+
+    /* Collar Selection State */
+    .modal-header-back {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+        gap: 10px;
+    }
+
+    .back-btn {
+        background: none;
+        border: none;
+        color: #2874f0;
+        font-weight: bold;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .design-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .design-card {
+        border: 2px solid #f1f3f6;
+        border-radius: 12px;
+        padding: 10px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .design-card.active {
+        border-color: #2874f0;
+        background: #f5faff;
+    }
+
+    .design-preview {
+        height: 40px;
+        border-radius: 20px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .collar-mockup {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .collar-classic {
+        background: #1a1a1a;
+    }
+
+    .collar-sporty {
+        background: #e53e3e;
+    }
+
+    .collar-luxury {
+        background: linear-gradient(135deg, #d4af37, #f6e05e, #d4af37);
+    }
+
+    .collar-glow {
+        background: #48bb78;
+        box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+
+    .collar-tag-fix {
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px;
+    }
+
+    .design-qr-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .design-card span {
+        font-size: 11px;
+        font-weight: 700;
+        color: #4a5568;
+    }
+
+    .success-icon {
+        font-size: 50px;
+        margin-bottom: 15px;
+    }
+
+    .cod-tag {
+        background: #f0fff4;
+        color: #2f855a;
+        padding: 8px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: bold;
+        border: 1px solid #c6f6d5;
+        text-align: center;
+    }
+</style>
+
+<!-- QR Modal Overlay -->
+<div id="qrModal" class="qr-modal-overlay">
+    <div class="qr-modal-content">
+        <button class="close-modal" onclick="closeQRModal()">×</button>
+
+        <div id="qrLoadingState" class="qr-state">
+            <div class="qr-spinner"></div>
+            <p>Generating secure QR<span class="dots">...</span></p>
+        </div>
+
+        <div id="qrLoadedState" class="qr-state" style="display: none;">
+            <h3 id="qrPetName" style="margin-bottom: 20px; color: var(--dark);"></h3>
+            <div class="qr-image-container">
+                <img id="qrImageDisplay" src="" alt="Pet QR Code">
+            </div>
+
+            <div class="modal-action-grid">
+                <a id="qrDownloadLink" href="#" class="btn-primary" style="text-align: center;">
+                    Download QR
+                </a>
+                <button onclick="showCollarSection()" class="btn-secondary" style="border: 1px solid #E2E8F0;">
+                    Buy Collar
+                </button>
+            </div>
+        </div>
+
+        <!-- NEW: Collar Selection State -->
+        <div id="collarSection" class="qr-state" style="display: none;">
+            <div class="modal-header-back">
+                <button onclick="backToQR()" class="back-btn">← Back</button>
+                <h3>Choose Design</h3>
+            </div>
+            <div class="design-grid">
+                <div class="design-card active" onclick="selectDesign('Classic', this)">
+                    <div class="design-preview">
+                        <div class="collar-mockup collar-classic">
+                            <div class="collar-tag-fix">
+                                <img src="" alt="QR" class="design-qr-preview">
+                            </div>
+                        </div>
+                    </div>
+                    <span>Classic Black</span>
+                </div>
+                <div class="design-card" onclick="selectDesign('Sporty', this)">
+                    <div class="design-preview">
+                        <div class="collar-mockup collar-sporty">
+                            <div class="collar-tag-fix">
+                                <img src="" alt="QR" class="design-qr-preview">
+                            </div>
+                        </div>
+                    </div>
+                    <span>Sporty Red</span>
+                </div>
+                <div class="design-card" onclick="selectDesign('Luxury', this)">
+                    <div class="design-preview">
+                        <div class="collar-mockup collar-luxury">
+                            <div class="collar-tag-fix">
+                                <img src="" alt="QR" class="design-qr-preview">
+                            </div>
+                        </div>
+                    </div>
+                    <span>Luxury Gold</span>
+                </div>
+                <div class="design-card" onclick="selectDesign('Glow', this)">
+                    <div class="design-preview">
+                        <div class="collar-mockup collar-glow">
+                            <div class="collar-tag-fix">
+                                <img src="" alt="QR" class="design-qr-preview">
+                            </div>
+                        </div>
+                    </div>
+                    <span>Glow in Dark</span>
+                </div>
+            </div>
+            <button onclick="showCheckoutForm()" class="btn-primary" style="width: 100%; margin-top: 20px;">
+                Continue to Checkout
+            </button>
+        </div>
+
+        <!-- NEW: Checkout State -->
+        <div id="checkoutState" class="qr-state" style="display: none;">
+            <div class="modal-header-back">
+                <button onclick="backToCollar()" class="back-btn">← Back</button>
+                <h3>Shipping Details</h3>
+            </div>
+            <form id="collarOrderForm" onsubmit="submitOrder(event)">
+                {% csrf_token %}
+                <input type="hidden" name="pet_id" id="orderPetId">
+                <input type="hidden" name="design" id="orderDesign" value="Classic">
+
+                <div class="form-group mb-3 text-start">
+                    <label>Full Name</label>
+                    <input type="text" name="full_name" required class="form-control"
+                        placeholder="Enter your full name">
+                </div>
+                <div class="form-group mb-3 text-start">
+                    <label>Phone Number</label>
+                    <input type="tel" name="phone_number" required class="form-control"
+                        placeholder="Your mobile number">
+                </div>
+                <div class="form-group mb-3 text-start">
+                    <label>Shipping Address</label>
+                    <textarea name="shipping_address" required class="form-control" rows="3"
+                        placeholder="Full address for delivery"></textarea>
+                </div>
+
+                <div class="cod-tag mb-4">
+                    <span>🚚 Cash on Delivery Only</span>
+                </div>
+
+                <button type="submit" id="submitOrderBtn" class="btn-primary" style="width: 100%;">
+                    Place Order
+                </button>
+            </form>
+        </div>
+
+        <!-- NEW: Success State -->
+        <div id="orderSuccessState" class="qr-state" style="display: none;">
+            <div class="success-icon">🎉</div>
+            <h3>Order Placed!</h3>
+            <p>Your personalized QR collar order has been received. Our team will contact you shortly for confirmation.
+            </p>
+            <button onclick="closeQRModal()" class="btn-primary" style="width: 100%; margin-top: 20px;">
+                Done
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.qr-modal-trigger').forEach(trigger => {
+            trigger.addEventListener('click', function () {
+                const data = this.dataset;
+                openQRModal(data.image, data.qr, data.download, data.name, data.id);
+            });
+        });
+    });
+
+    function openQRModal(petImage, qrUrl, downloadUrl, petName, petId) {
+        const modal = document.getElementById('qrModal');
+        const loadingState = document.getElementById('qrLoadingState');
+        const loadedState = document.getElementById('qrLoadedState');
+        const qrImage = document.getElementById('qrImageDisplay');
+        const downloadLink = document.getElementById('qrDownloadLink');
+        const nameDisplay = document.getElementById('qrPetName');
+
+        modal.classList.add('active');
+        document.querySelectorAll('.qr-state').forEach(s => s.style.display = 'none');
+        loadingState.style.display = 'block';
+
+        document.getElementById('orderPetId').value = petId;
+        qrImage.src = qrUrl;
+        downloadLink.href = downloadUrl;
+        nameDisplay.textContent = petName;
+
+        document.querySelectorAll('.design-qr-preview').forEach(img => {
+            img.src = qrUrl;
+        });
+
+        setTimeout(() => {
+            loadingState.style.display = 'none';
+            loadedState.style.display = 'block';
+        }, 800);
+    }
+
+    function closeQRModal() {
+        document.getElementById('qrModal').classList.remove('active');
+    }
+
+    // Collar Order Functions
+    function showCollarSection() {
+        document.getElementById('qrLoadedState').style.display = 'none';
+        document.getElementById('collarSection').style.display = 'block';
+    }
+
+    function backToQR() {
+        document.getElementById('collarSection').style.display = 'none';
+        document.getElementById('qrLoadedState').style.display = 'block';
+    }
+
+    function selectDesign(design, element) {
+        document.querySelectorAll('.design-card').forEach(c => c.classList.remove('active'));
+        element.classList.add('active');
+        document.getElementById('orderDesign').value = design;
+    }
+
+    function showCheckoutForm() {
+        document.getElementById('collarSection').style.display = 'none';
+        document.getElementById('checkoutState').style.display = 'block';
+    }
+
+    function backToCollar() {
+        document.getElementById('checkoutState').style.display = 'none';
+        document.getElementById('collarSection').style.display = 'block';
+    }
+
+    function submitOrder(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitOrderBtn');
+        btn.disabled = true;
+        btn.textContent = 'Processing...';
+
+        const formData = new FormData(document.getElementById('collarOrderForm'));
+
+        fetch('{% url "place_order" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    document.getElementById('checkoutState').style.display = 'none';
+                    document.getElementById('orderSuccessState').style.display = 'block';
+                } else {
+                    alert('Error: ' + data.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Place Order';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Something went wrong. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Place Order';
+            });
+    }
+</script>
+{% endblock %}

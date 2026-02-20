@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .staff-dashboard {
+        padding: 120px 8% 80px;
+        background: #F8FAFC;
+        min-height: 100vh;
+    }
+
+    .dashboard-header {
+        margin-bottom: 40px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .dashboard-header h1 {
+        font-size: 32px;
+        font-weight: 800;
+        color: var(--dark);
+    }
+
+    .badge-staff {
+        background: var(--dark);
+        color: white;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        vertical-align: middle;
+        margin-left: 10px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 24px;
+        margin-bottom: 60px;
+    }
+
+    .stat-card {
+        background: white;
+        padding: 24px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        transition: transform 0.2s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+
+    .stat-title {
+        color: var(--slate);
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+    }
+
+    .stat-value {
+        font-size: 36px;
+        font-weight: 800;
+        color: var(--primary);
+    }
+
+    .stat-icon {
+        font-size: 24px;
+        margin-bottom: 12px;
+        opacity: 0.8;
+    }
+
+    /* Sections */
+    .section-title {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 24px;
+        color: var(--dark);
+        border-left: 4px solid var(--primary);
+        padding-left: 16px;
+    }
+
+    .grid-2-col {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+    }
+
+    @media(max-width: 900px) {
+        .grid-2-col {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Tables */
+    .table-card {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+        padding: 0;
+        overflow: hidden;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th {
+        text-align: left;
+        padding: 16px 24px;
+        background: #F1F5F9;
+        color: var(--slate);
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    td {
+        padding: 16px 24px;
+        border-bottom: 1px solid #F1F5F9;
+        color: var(--dark);
+        font-size: 15px;
+    }
+
+    tr:last-child td {
+        border-bottom: none;
+    }
+
+    .status-active {
+        color: #10B981;
+        font-weight: 600;
+    }
+
+    .status-lost {
+        color: #EF4444;
+        font-weight: 600;
+    }
+
+    .action-link {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .action-link:hover {
+        text-decoration: underline;
+    }
+
+    .empty-msg {
+        padding: 30px;
+        text-align: center;
+        color: var(--slate);
+    }
+</style>
+
+<div class="staff-dashboard">
+    <div class="dashboard-header">
+        <div>
+            <h1>Admin Dashboard <span class="badge-staff">Superuser</span></h1>
+            <p style="color: var(--slate);">Site Overview & Management Control Center</p>
+        </div>
+        <a href="/admin/" class="btn btn-outline-secondary" target="_blank">
+            Open Advanced Database Panel ↗
+        </a>
+    </div>
+
+    <!-- Key Metrics -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <span class="stat-icon">👥</span>
+            <div>
+                <div class="stat-title">Total Users</div>
+                <div class="stat-value">{{ total_users }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">🐾</span>
+            <div>
+                <div class="stat-title">Total Pets Protected</div>
+                <div class="stat-value">{{ total_pets }}</div>
+            </div>
+        </div>
+        <div class="stat-card">
+            <span class="stat-icon">📱</span>
+            <div>
+                <div class="stat-title">Total Scans Recorded</div>
+                <div class="stat-value">{{ total_scans }}</div>
+            </div>
+        </div>
+        <div class="stat-card" style="background: var(--dark); color: white;">
+            <span class="stat-icon">⚡</span>
+            <div>
+                <div class="stat-title" style="color: #94A3B8;">System Status</div>
+                <div class="stat-value" style="color: #4ADE80; font-size: 24px;">Active</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grid-2-col">
+        <!-- Recent Pets -->
+        <div>
+            <h3 class="section-title">Newest Pets Added</h3>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Pet Name</th>
+                            <th>Owner</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for pet in recent_pets %}
+                        <tr>
+                            <td>
+                                <strong>{{ pet.name }}</strong>
+                                <br><small style="color: var(--slate);">{{ pet.breed }}</small>
+                            </td>
+                            <td>{{ pet.owner.username }}</td>
+                            <td>
+                                {% if pet.lost_status %}
+                                <span class="status-lost">LOST 🚨</span>
+                                {% else %}
+                                <span class="status-active">Safe</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ pet.created_at|date:"M d" }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-msg">No pets found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div>
+            <h3 class="section-title">Newest Users</h3>
+            <div class="table-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Joined</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for user in recent_users %}
+                        <tr>
+                            <td>
+                                <strong>{{ user.username }}</strong>
+                                {% if user.is_staff %}<span
+                                    style="font-size:10px; background:#F1F5F9; padding:2px 6px; border-radius:4px;">STAFF</span>{%
+                                endif %}
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.date_joined|date:"M d" }}</td>
+                            <td><a href="/admin/auth/user/{{ user.id }}/change/" target="_blank"
+                                    class="action-link">Manage</a></td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="empty-msg">No users found.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+        <h3 class="section-title">Recent Privacy Scans</h3>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Time</th>
+                        <th>Pet Scanned</th>
+                        <th>Location Estimate</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for scan in recent_scans %}
+                    <tr>
+                        <td>{{ scan.scanned_at|timesince }} ago</td>
+                        <td>
+                            <a href="{% url 'pet_detail_public' scan.pet.unique_slug %}" target="_blank"
+                                class="action-link">{{ scan.pet.name }}</a>
+                        </td>
+                        <td>{{ scan.location|default:"Unknown" }}</td>
+                        <td><code>{{ scan.ip_address }}</code></td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="empty-msg">No recent scans recorded.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

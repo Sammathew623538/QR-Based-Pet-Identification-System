@@ -1,0 +1,344 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ratings & Reviews | PetQR{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --fk-blue: #2874f0;
+        --fk-green: #26a541;
+        --fk-orange: #fb641b;
+        --fk-bg: #f1f3f6;
+        --fk-border: #f0f0f0;
+        --fk-text: #212121;
+        --fk-muted: #878787;
+    }
+
+    body {
+        background-color: var(--fk-bg);
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .reviews-container {
+        padding: 20px 0;
+    }
+
+    .white-card {
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1);
+        margin-bottom: 12px;
+    }
+
+    .card-header {
+        padding: 16px 24px;
+        border-bottom: 1px solid var(--fk-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-header h5 {
+        font-size: 18px;
+        font-weight: 500;
+        margin: 0;
+    }
+
+    /* Rating Summary Flipkart Style */
+    .rating-summary-row {
+        display: flex;
+        padding: 24px;
+        gap: 40px;
+    }
+
+    .avg-rating-col {
+        text-align: center;
+        width: 200px;
+    }
+
+    .big-avg {
+        font-size: 32px;
+        font-weight: 500;
+        margin-bottom: 5px;
+    }
+
+    .stars-big {
+        color: #ddd;
+        font-size: 18px;
+        margin-bottom: 8px;
+    }
+
+    .stars-big .active {
+        color: var(--fk-text);
+    }
+
+    .total-counts {
+        color: var(--fk-muted);
+        font-size: 14px;
+    }
+
+    .rating-bars-col {
+        flex: 1;
+    }
+
+    .rating-bar-item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin-bottom: 8px;
+        font-size: 12px;
+    }
+
+    .bar-label {
+        width: 40px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .bar-bg {
+        flex: 1;
+        height: 6px;
+        background: #f0f0f0;
+        border-radius: 3px;
+    }
+
+    .bar-fill {
+        height: 100%;
+        border-radius: 3px;
+    }
+
+    .fill-5 {
+        background-color: var(--fk-green);
+    }
+
+    .fill-4 {
+        background-color: var(--fk-green);
+    }
+
+    .fill-3 {
+        background-color: var(--fk-green);
+    }
+
+    .fill-2 {
+        background-color: #ff9f00;
+    }
+
+    .fill-1 {
+        background-color: #ff6161;
+    }
+
+    .bar-count {
+        width: 50px;
+        color: var(--fk-muted);
+    }
+
+    /* Individual Review Item */
+    .review-item {
+        padding: 24px;
+        border-bottom: 1px solid var(--fk-border);
+    }
+
+    .review-item:last-child {
+        border-bottom: none;
+    }
+
+    .review-top {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 12px;
+    }
+
+    .rating-badge {
+        background: var(--fk-green);
+        color: white;
+        padding: 2px 6px;
+        border-radius: 2px;
+        font-size: 12px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .rating-badge.low {
+        background-color: #ff6161;
+    }
+
+    .rating-badge.mid {
+        background-color: #ff9f00;
+    }
+
+    .review-title {
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+    .review-text {
+        font-size: 14px;
+        line-height: 1.5;
+        color: var(--fk-text);
+        margin-bottom: 15px;
+    }
+
+    .review-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+    }
+
+    .reviewer-info {
+        color: var(--fk-muted);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .certified-buyer {
+        color: var(--fk-muted);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-weight: 500;
+    }
+
+    .certified-buyer i {
+        color: var(--fk-muted);
+        font-size: 10px;
+    }
+
+    .review-actions {
+        display: flex;
+        gap: 20px;
+        color: var(--fk-muted);
+    }
+
+    .action-btn {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
+
+    .action-btn:hover {
+        color: var(--fk-blue);
+    }
+
+    @media (max-width: 768px) {
+        .rating-summary-row {
+            flex-direction: column;
+            gap: 20px;
+            padding: 16px;
+        }
+
+        .avg-rating-col {
+            width: 100%;
+        }
+
+        .card-header h5 {
+            font-size: 16px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="reviews-container">
+    <div class="container" style="max-width: 1100px;">
+
+        <div class="white-card">
+            <div class="card-header">
+                <h5>Ratings & Reviews</h5>
+                <a href="{% url 'dashboard' %}" class="btn btn-sm"
+                    style="border: 1px solid #dbdbdb; color: var(--fk-text); font-weight: 500;">REGISTER PET</a>
+            </div>
+
+            <div class="rating-summary-row">
+                <div class="avg-rating-col">
+                    <div class="big-avg">4.8 ★</div>
+                    <div class="total-counts">1,248 Ratings &<br>352 Reviews</div>
+                </div>
+
+                <div class="rating-bars-col">
+                    <div class="rating-bar-item">
+                        <div class="bar-label">5 ★</div>
+                        <div class="bar-bg">
+                            <div class="bar-fill fill-5" style="width: 85%;"></div>
+                        </div>
+                        <div class="bar-count">982</div>
+                    </div>
+                    <div class="rating-bar-item">
+                        <div class="bar-label">4 ★</div>
+                        <div class="bar-bg">
+                            <div class="bar-fill fill-4" style="width: 10%;"></div>
+                        </div>
+                        <div class="bar-count">156</div>
+                    </div>
+                    <div class="rating-bar-item">
+                        <div class="bar-label">3 ★</div>
+                        <div class="bar-bg">
+                            <div class="bar-fill fill-3" style="width: 3%;"></div>
+                        </div>
+                        <div class="bar-count">42</div>
+                    </div>
+                    <div class="rating-bar-item">
+                        <div class="bar-label">2 ★</div>
+                        <div class="bar-bg">
+                            <div class="bar-fill fill-2" style="width: 1%;"></div>
+                        </div>
+                        <div class="bar-count">12</div>
+                    </div>
+                    <div class="rating-bar-item">
+                        <div class="bar-label">1 ★</div>
+                        <div class="bar-bg">
+                            <div class="bar-fill fill-1" style="width: 4%;"></div>
+                        </div>
+                        <div class="bar-count">56</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="white-card">
+            {% if reviews %}
+            {% for review in reviews %}
+            <div class="review-item">
+                <div class="review-top">
+                    <div class="rating-badge {% if review.rating < 3 %}low{% elif review.rating < 4 %}mid{% endif %}">
+                        {{ review.rating }} ★
+                    </div>
+                    <div class="review-title">Highly Recommended</div>
+                </div>
+                <div class="review-text">
+                    {{ review.comment }}
+                </div>
+                <div class="review-footer">
+                    <div class="reviewer-name-date">
+                        <div class="reviewer-info">
+                            <span class="fw-bold" style="color: var(--fk-text);">{{ review.user.username }}</span>
+                            <span class="certified-buyer"><i class="fas fa-check-circle"></i> Certified Buyer</span>
+                            <span>{{ review.created_at|timesince }} ago</span>
+                        </div>
+                        <div class="mt-1" style="color: var(--fk-muted);">Design: {{ review.design }}</div>
+                    </div>
+                    <div class="review-actions d-none d-md-flex">
+                        <div class="action-btn"><i class="far fa-thumbs-up"></i> 124</div>
+                        <div class="action-btn"><i class="far fa-thumbs-down"></i> 2</div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="p-5 text-center">
+                <p class="text-muted">No reviews yet. Be the first one to rate our tags!</p>
+            </div>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock %}

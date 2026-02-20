@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Manage Account | PetQR{% endblock %}
+
+{% block content %}
+<div class="container py-3 py-lg-5" style="padding-top: var(--header-height, 120px) !important; min-height: 80vh;">
+    <div class="row g-4">
+        <!-- Sidebar Navigation (Desktop) -->
+        <div class="col-lg-3 d-none d-lg-block">
+            <div class="card border-0 shadow-sm rounded-1 overflow-hidden sticky-top" style="top: 100px;">
+                <div class="p-3 bg-white border-bottom d-flex align-items-center">
+                    <div class="position-relative me-3">
+                        <div class="profile-img-container">
+                            {% if user.profile.image %}
+                            <img src="{{ user.profile.image.url }}" class="rounded-circle border" width="50" height="50"
+                                style="object-fit: cover;">
+                            {% else %}
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-secondary border"
+                                style="width: 50px; height: 50px; font-size: 1.5rem;">
+                                👤
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div class="min-width-0">
+                        <p class="text-muted mb-0 small" style="font-size: 11px;">Hello,</p>
+                        <h6 class="mb-0 fw-bold text-dark text-truncate">{{ user.username }}</h6>
+                    </div>
+                </div>
+
+                <div class="list-group list-group-flush py-1">
+                    <!-- My Orders / Assets Segment -->
+                    <a href="{% url 'dashboard' %}"
+                        class="list-group-item border-0 py-3 bg-white d-flex align-items-center text-decoration-none">
+                        <div class="sidebar-icon-box text-primary me-3"><i class="fas fa-folder"></i></div>
+                        <div class="fw-bold text-muted text-uppercase" style="font-size: 12px; letter-spacing: 0.5px;">
+                            My Assets</div>
+                        <i class="fas fa-chevron-right ms-auto text-light-gray" style="font-size: 10px;"></i>
+                    </a>
+                    <a href="{% url 'dashboard' %}"
+                        class="list-group-item list-group-item-action border-0 py-2 ps-5 text-dark small d-flex justify-content-between align-items-center {% if '/dashboard/' in request.path %}active-sidebar{% endif %}">
+                        <span>My Registered Pets</span>
+                    </a>
+
+                    <div class="border-top"></div>
+
+                    <!-- Account Settings Segment -->
+                    <a href="{% url 'profile' %}"
+                        class="list-group-item border-0 py-3 bg-white d-flex align-items-center text-decoration-none">
+                        <div class="sidebar-icon-box text-primary me-3"><i class="fas fa-user"></i></div>
+                        <div class="fw-bold text-muted text-uppercase" style="font-size: 12px; letter-spacing: 0.5px;">
+                            Account Settings</div>
+                        <i class="fas fa-chevron-right ms-auto text-light-gray" style="font-size: 10px;"></i>
+                    </a>
+                    <a href="{% url 'profile' %}"
+                        class="list-group-item list-group-item-action border-0 py-2 ps-5 small mb-1 {% if request.path == '/profile/' %}active-sidebar{% else %}text-dark{% endif %}">Profile
+                        Information</a>
+                    <a href="{% url 'edit_profile' %}"
+                        class="list-group-item list-group-item-action border-0 py-2 ps-5 small mb-1 {% if '/profile/edit/' in request.path %}active-sidebar{% else %}text-dark{% endif %}">Edit
+                        Profile</a>
+
+                    <div class="border-top mt-2"></div>
+                    <a href="{% url 'logout' %}"
+                        class="list-group-item list-group-item-action border-0 py-3 d-flex align-items-center text-danger fw-bold small">
+                        <div class="sidebar-icon-box me-3"><i class="fas fa-power-off"></i></div>
+                        Logout
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-lg-9">
+            <!-- Mobile Sticky Header -->
+            <div class="d-lg-none mb-3 bg-white shadow-sm rounded-1 p-3 sticky-top" style="top: 70px; z-index: 10;">
+                <div class="d-flex align-items-center">
+                    <a href="{% url 'profile' %}" class="me-3 text-dark text-decoration-none fs-5">←</a>
+                    <h6 class="mb-0 fw-bold">Edit Profile</h6>
+                </div>
+            </div>
+
+            <div class="bg-white shadow-sm rounded-1 overflow-hidden border">
+                <div class="p-4 border-bottom bg-white">
+                    <h5 class="mb-0 fw-bold text-dark section-title">Edit Personal Information</h5>
+                </div>
+
+                <div class="card-body p-4 pt-4">
+                    <form method="POST" enctype="multipart/form-data" class="modern-flipkart-form">
+                        {% csrf_token %}
+
+                        <!-- Personal Details Segment -->
+                        <div class="mb-5">
+                            <h6 class="text-primary fw-bold text-uppercase mb-4 px-3 py-2 bg-light border-start border-4 border-primary"
+                                style="font-size: 12px; letter-spacing: 1px;">
+                                1. Basic Details
+                            </h6>
+                            <div class="custom-crispy-form">
+                                {{ u_form|crispy }}
+                            </div>
+                        </div>
+
+                        <!-- Contact & Image Segment -->
+                        <div class="mb-4">
+                            <h6 class="text-primary fw-bold text-uppercase mb-4 px-3 py-2 bg-light border-start border-4 border-primary"
+                                style="font-size: 12px; letter-spacing: 1px;">
+                                2. Contact & Profile Media
+                            </h6>
+                            <div class="custom-crispy-form">
+                                {{ p_form|crispy }}
+                            </div>
+                        </div>
+
+                        <!-- Action Footer -->
+                        <div class="mt-5 pt-4 border-top d-flex flex-column flex-sm-row gap-3">
+                            <button type="submit"
+                                class="btn btn-primary px-lg-5 py-2 fw-bold shadow-sm rounded-1 order-1 order-sm-2 save-btn">
+                                SAVE CHANGES
+                            </button>
+                            <a href="{% url 'profile' %}"
+                                class="btn btn-light border px-lg-4 py-2 fw-bold text-muted rounded-1 order-2 order-sm-1 cancel-btn">
+                                CANCEL
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    body {
+        background-color: var(--bg);
+        font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    }
+
+    .active-sidebar {
+        background-color: #f5faff !important;
+        color: #2874f0 !important;
+        font-weight: 700;
+        border-right: 4px solid #2874f0 !important;
+    }
+
+    .sidebar-icon-box {
+        width: 25px;
+        display: inline-block;
+        text-align: center;
+        font-size: 16px;
+    }
+
+    .text-light-gray {
+        color: #d4d4d4;
+    }
+
+    /* Flipkart Form Inputs */
+    .custom-crispy-form .form-control,
+    .custom-crispy-form .form-select {
+        border-radius: 2px !important;
+        padding: 12px 15px !important;
+        border: 1px solid #d1d5db !important;
+        box-shadow: none !important;
+        font-size: 14px !important;
+        background-color: #fff;
+    }
+
+    .custom-crispy-form .form-control:focus {
+        border-color: #2874f0 !important;
+        outline: none;
+    }
+
+    .custom-crispy-form label {
+        font-size: 12px !important;
+        color: #878787 !important;
+        margin-bottom: 6px !important;
+        font-weight: 500 !important;
+        text-transform: uppercase !important;
+    }
+
+    /* Buttons */
+    .save-btn {
+        background: #fb641b !important;
+        border: none !important;
+        font-size: 15px !important;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .cancel-btn {
+        background: #fff !important;
+        border: 1px solid #eee !important;
+        font-size: 15px !important;
+        height: 48px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .bg-white.shadow-sm {
+        border: none !important;
+        border-radius: 2px !important;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, .1) !important;
+    }
+
+    @media (max-width: 575.98px) {
+
+        .save-btn,
+        .cancel-btn {
+            width: 100% !important;
+            border-radius: 0 !important;
+        }
+
+        .container {
+            padding-left: 0 !important;
+            padding-right: 0 !important;
+        }
+
+        .bg-white.shadow-sm {
+            border-radius: 0 !important;
+        }
+
+        footer {
+            display: none !important;
+        }
+    }
+</style>
+{% endblock %}

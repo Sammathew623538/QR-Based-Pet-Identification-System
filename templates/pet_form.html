@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<style>
+    footer {
+        display: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+
+<div class="form-wrapper">
+    <div class="form-card">
+        <div class="form-header">
+            <h2>{{ title|default:"Add New Pet" }}</h2>
+            <p>Fill in the details to create a secure profile.</p>
+        </div>
+
+        <!-- Manual Form Rendering to bypass Crispy/Bootstrap dependency -->
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>Please correct the errors below:</strong>
+                {{ form.non_field_errors }}
+                <ul>
+                    {% for field in form %}
+                    {% if field.errors %}
+                    <li>{{ field.label }}: {{ field.errors|striptags }}</li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endif %}
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Pet Name*</label>
+                    {{ form.name }}
+                </div>
+                <div class="form-group">
+                    <label>Breed</label>
+                    {{ form.breed }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Age (Years)</label>
+                    {{ form.age }}
+                </div>
+                <div class="form-group">
+                    <label>Gender</label>
+                    {{ form.gender }}
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Color / Marking</label>
+                    {{ form.color }}
+                </div>
+                <div class="form-group">
+                    <label>Microchip Number</label>
+                    {{ form.microchip_number }}
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Medical Conditions</label>
+                {{ form.medical_conditions }}
+            </div>
+
+            <div class="form-group">
+                <label>Vaccination Details</label>
+                {{ form.vaccination_details }}
+            </div>
+
+
+
+            <div class="form-group">
+                <label>Emergency Contact Info</label>
+                {{ form.emergency_contact }}
+            </div>
+
+            <div class="form-group">
+                <label>Pet Profile Image</label>
+                {{ form.image }}
+            </div>
+
+            <button type="submit" class="btn-submit">Save Pet Profile</button>
+            <a href="{% url 'dashboard' %}" class="btn-cancel">Cancel and go back</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

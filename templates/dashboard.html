@@ -1,0 +1,918 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load pet_extras %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}?v=1.3">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+{% endblock %}
+
+{% block content %}
+<div class="dashboard-wrapper">
+    <div class="container-fluid px-lg-5">
+        <div class="row g-4 dashboard-main-row">
+            <!-- Sidebar Navigation -->
+            <aside class="col-lg-3 d-none d-lg-block">
+                <div class="sidebar-sticky">
+                    <div class="user-card">
+                        <div class="user-info-side">
+                            <div class="user-avatar-small">
+                                {% if user.profile.image %}
+                                <img src="{{ user.profile.image|safe_url }}" alt="">
+                                {% else %}
+                                <div class="avatar-init">👤</div>
+                                {% endif %}
+                            </div>
+                            <div class="user-text-side">
+                                <span class="greeting">Hello,</span>
+                                <h6 class="username-side">{{ user.username }}</h6>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="nav-card">
+                        <div class="nav-group">
+                            <div class="nav-group-header">
+                                <i class="fas fa-folder-open text-primary"></i>
+                                <span>MY ASSETS</span>
+                            </div>
+                            <div class="nav-items">
+                                <a href="#overview" class="nav-item-link active">
+                                    <span>Overview</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                                <a href="#orders" class="nav-item-link">
+                                    <span>My Orders</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                                <a href="#scans" class="nav-item-link">
+                                    <span>Tag Scans</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                                <a href="#pets" class="nav-item-link">
+                                    <span>Registered Pets</span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="nav-group">
+                            <div class="nav-group-header">
+                                <i class="fas fa-user-cog text-primary"></i>
+                                <span>ACCOUNT SETTINGS</span>
+                            </div>
+                            <div class="nav-items">
+                                <a href="{% url 'profile' %}" class="nav-item-link">Profile Information</a>
+                                <a href="{% url 'edit_profile' %}" class="nav-item-link">Edit Profile</a>
+                            </div>
+                        </div>
+
+                        <div class="nav-footer">
+                            <a href="{% url 'logout' %}" class="logout-pill">
+                                <i class="fas fa-power-off"></i>
+                                <span>Logout</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Mobile Bottom Navigation Bar: Moved Outside for better Fixed Positioning -->
+
+
+            <!-- Main Content Area -->
+            <main class="col-lg-9 col-md-12">
+
+
+                <div class="content-panel">
+                    <!-- Welcome Header -->
+                    <div class="panel-header mb-4">
+                        <div class="welcome-box">
+                            <h4>Control Center</h4>
+                            <p>Managing protection for <strong>{{ total_pets }}</strong> pet tag{{ total_pets|pluralize
+                                }}.</p>
+                        </div>
+                        <a href="{% url 'profile' %}"
+                            class="d-md-none btn btn-white shadow-sm rounded-circle d-flex align-items-center justify-content-center"
+                            style="width: 42px; height: 42px; color: var(--primary-blue);">
+                            <i class="fas fa-user-cog"></i>
+                        </a>
+                        <a href="{% url 'pet_create' %}" class="btn-create-top d-none d-md-flex">
+                            <i class="fas fa-plus-circle"></i> Register New Pet
+                        </a>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div id="overview" class="stats-row mb-5">
+                        <div class="stat-card">
+                            <div class="stat-icon-box blue">
+                                <i class="fas fa-paw"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>{{ total_pets }}</h3>
+                                <p>Total Pets</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-box orange">
+                                <i class="fas fa-qrcode"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>{{ total_scans }}</h3>
+                                <p>Tag Scans</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-box {% if lost_pets_count > 0 %}red pulse{% else %}green{% endif %}">
+                                <i
+                                    class="fas {% if lost_pets_count > 0 %}fa-exclamation-triangle{% else %}fa-shield-alt{% endif %}"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 class="{% if lost_pets_count > 0 %}text-danger{% else %}text-success{% endif %}">
+                                    {% if lost_pets_count > 0 %}{{ lost_pets_count }}{% else %}Safe{% endif %}
+                                </h3>
+                                <p>Safety Status</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon-box purple">
+                                <i class="fas fa-shopping-bag"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3>{{ orders.count }}</h3>
+                                <p>Orders</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scan History Section -->
+                    <section id="scans" class="content-section mb-5">
+                        <div class="section-title">
+                            <h5>Recent Tag Scans</h5>
+                            <span class="badge bg-primary-light text-primary border-primary"
+                                style="background: rgba(40, 116, 240, 0.1);">Live Tracking</span>
+                        </div>
+
+                        <div class="scan-history-list">
+                            {% if recent_scans %}
+                            <div class="table-responsive shadow-sm rounded-4 bg-white p-3">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="bg-light">
+                                        <tr style="font-size: 13px; color: #878787;">
+                                            <th class="border-0">Pet Name</th>
+                                            <th class="border-0">Scan Date & Time</th>
+                                            <th class="border-0 text-center">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for scan in recent_scans %}
+                                        <tr>
+                                            <td>
+                                                <div class="d-flex align-items-center gap-3">
+                                                    <div class="pet-mini-avatar"
+                                                        style="width: 40px; height: 40px; border-radius: 50%; overflow: hidden; background: #f8f9fa; border: 1px solid #eee;">
+                                                        {% if scan.pet.image %}
+                                                        <img src="{{ scan.pet.image|safe_url }}"
+                                                            style="width: 100%; height: 100%; object-fit: cover;">
+                                                        {% else %}
+                                                        <span
+                                                            class="d-flex align-items-center justify-content-center h-100"
+                                                            style="font-size: 18px;">🐾</span>
+                                                        {% endif %}
+                                                    </div>
+                                                    <div>
+                                                        <span class="fw-bold d-block"
+                                                            style="color: #212121;">{{scan.pet.name}}</span>
+                                                        <span class="text-muted small">Smart Tag Scan</span>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td style="font-size: 14px; color: #212121; font-weight: 500;">
+                                                <i class="far fa-clock me-1 text-primary"></i>
+                                                {{ scan.scanned_at|date:"d M Y, h:i A" }}
+                                            </td>
+                                            <td class="text-center">
+                                                <button type="button" class="btn btn-link text-danger p-0"
+                                                    title="Delete Scan"
+                                                    data-delete-url="{% url 'delete_scan' scan.pk %}"
+                                                    onclick="confirmDeleteScan(this.getAttribute('data-delete-url'))">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="empty-placeholder text-center py-5 border rounded-4 bg-white">
+                                <i class="fas fa-radar fa-3x mb-3 opacity-25" style="color: var(--primary-blue);"></i>
+                                <p class="text-muted mb-0">No one has scanned your pet tags yet.</p>
+                                <span class="small text-muted">When someone scans a lost pet's tag, details will appear
+                                    here.</span>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </section>
+
+                    <!-- Orders Section -->
+                    <section id="orders" class="content-section mb-5">
+                        <div class="section-title">
+                            <h5>Recent Tag Orders</h5>
+                            <a href="#" class="view-all">View History</a>
+                        </div>
+
+                        <div class="order-list">
+                            {% if orders %}
+                            {% for order in orders %}
+                            <div class="order-row">
+                                <div class="order-info-main">
+                                    <div class="order-badge">#{{ order.id }}</div>
+                                    <div class="order-desc">
+                                        <h6>{{ order.pet.name }}'s Smart Tag</h6>
+                                        <span>Style: {{ order.design }}</span>
+                                    </div>
+                                </div>
+                                <div class="order-meta-info d-none d-md-flex">
+                                    <div class="meta-item">
+                                        <label>Date</label>
+                                        <p>{{ order.created_at|date:"M d" }}</p>
+                                    </div>
+                                    <div class="meta-item">
+                                        <label>Status</label>
+                                        <p class="status-indicator {{ order.status|lower }}">{{ order.status }}</p>
+                                    </div>
+                                </div>
+                                <div class="order-action d-flex gap-2 align-items-center">
+                                    {% if order.status == 'Pending' or order.status == 'Processing' %}
+                                    <a href="javascript:void(0)" class="btn-cancel-small"
+                                        data-url="{% url 'cancel_order' order.id %}"
+                                        onclick="confirmCancelOrder(this.getAttribute('data-url'))">
+                                        <i class="fas fa-times"></i> Cancel</a>
+                                    {% endif %}
+
+                                    {% if order.status == 'Delivered' %}
+                                    <a href="{% url 'order_detail' order.id %}" class="btn-track"
+                                        style="border-color: #fb641b; color: #fb641b;">
+                                        <i class="fas fa-star"></i> Rate Product</a>
+                                    {% endif %}
+
+                                    {% if order.status != 'Cancelled' %}
+                                    <a href="{% url 'order_detail' order.id %}" class="btn-track">Track <i
+                                            class="fas fa-arrow-right"></i></a>
+                                    {% else %}
+                                    <div class="d-flex gap-2">
+                                        <a href="{% url 'order_detail' order.id %}" class="btn-track"
+                                            style="color: #878787; border-color: #dbdbdb; background: #fff;">View
+                                            Details</a>
+                                        <button type="button" class="btn btn-outline-danger btn-sm px-2"
+                                            title="Delete Order History"
+                                            data-delete-url="{% url 'delete_order' order.id %}"
+                                            onclick="confirmDeleteOrder(this.getAttribute('data-delete-url'))">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            {% endfor %}
+                            {% else %}
+                            <div class="empty-placeholder text-center py-5">
+                                <p class="text-muted">No active tag orders found.</p>
+                                <a href="{% url 'pet_create' %}" class="btn btn-sm btn-primary">Register a Pet to Order
+                                    Tags</a>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </section>
+
+                    <!-- Pets Section -->
+                    <section id="pets" class="content-section">
+                        <div class="section-title">
+                            <h5>Protected Pet Profiles</h5>
+                            <span class="badge bg-light text-dark border">{{ total_pets }} Total</span>
+                        </div>
+
+                        <div class="pet-responsive-grid">
+                            {% for pet in pets %}
+                            <div class="modern-pet-card {% if pet.lost_status %}is-lost{% endif %}">
+                                <div class="p-card-header">
+                                    <div class="p-card-img">
+                                        {% if pet.image %}
+                                        <img src="{{ pet.image|safe_url }}" alt="">
+                                        {% else %}
+                                        <div class="p-img-placeholder">🐾</div>
+                                        {% endif %}
+                                        {% if pet.lost_status %}
+                                        <div class="lost-indicator">LOST</div>
+                                        {% endif %}
+                                    </div>
+                                    <div class="p-card-title">
+                                        <h6>{{ pet.name }}</h6>
+                                        <div class="p-card-tags">
+                                            <span>{{ pet.gender }}</span>
+                                            <span>{{ pet.breed }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="p-card-body">
+                                    <div class="p-attribute">
+                                        <i class="fas fa-birthday-cake"></i>
+                                        <span>Age: {{ pet.age|default:"--" }}</span>
+                                    </div>
+                                    <div class="p-attribute">
+                                        <i class="fas fa-fingerprint"></i>
+                                        <span>Microchip: {% if pet.microchip_number %}Yes{% else %}No{% endif %}</span>
+                                    </div>
+                                </div>
+
+                                <div class="p-card-footer">
+                                    <a href="{% url 'pet_detail_public' pet.unique_slug %}"
+                                        class="btn-p-view">Profile</a>
+                                    <div class="dropdown">
+                                        <button class="btn-p-more" type="button" data-bs-toggle="dropdown">
+                                            <i class="fas fa-ellipsis-v"></i>
+                                        </button>
+                                        <ul class="dropdown-menu dropdown-menu-end shadow border-0">
+                                            <li><a class="dropdown-item qr-modal-trigger" href="javascript:void(0)"
+                                                    data-image="{{ pet.image|safe_url }}"
+                                                    data-qr="{{ pet.qr_code_image|safe_url }}"
+                                                    data-download="{% url 'download_qr' pet.pk %}"
+                                                    data-name="{{ pet.name }}" data-id="{{ pet.pk }}"
+                                                    data-delete="{% url 'pet_delete' pet.pk %}">
+                                                    <i class="fas fa-qrcode me-2"></i> View QR Tag</a></li>
+                                            <li><a class="dropdown-item qr-modal-trigger" href="javascript:void(0)"
+                                                    data-image="{{ pet.image|safe_url }}"
+                                                    data-qr="{{ pet.qr_code_image|safe_url }}"
+                                                    data-download="{% url 'download_qr' pet.pk %}"
+                                                    data-name="{{ pet.name }}" data-id="{{ pet.pk }}"
+                                                    data-delete="{% url 'pet_delete' pet.pk %}" data-order="true">
+                                                    <i class="fas fa-shopping-bag me-2"></i> Order Smart Collar</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'medical_records' pet.pk %}"><i
+                                                        class="fas fa-notes-medical me-2"></i> Medical History</a></li>
+                                            <li><a class="dropdown-item" href="{% url 'pet_update' pet.pk %}"><i
+                                                        class="fas fa-edit me-2"></i> Edit Details</a></li>
+                                            <li>
+                                                <hr class="dropdown-divider">
+                                            </li>
+                                            <li><a class="dropdown-item" href="{% url 'toggle_lost_mode' pet.pk %}">
+                                                    {% if pet.lost_status %}
+                                                    <span class="text-success"><i class="fas fa-check-circle me-2"></i>
+                                                        Mark as Found</span>
+                                                    {% else %}
+                                                    <span class="text-danger"><i
+                                                            class="fas fa-exclamation-circle me-2"></i> Report as
+                                                        Lost</span>
+                                                    {% endif %}
+                                                </a></li>
+                                            {% if pet.lost_status %}
+                                            <li><a class="dropdown-item fw-bold text-primary"
+                                                    href="{% url 'poster_preview' pet.pk %}">
+                                                    <i class="fas fa-file-pdf me-2"></i> Download Missing Poster</a>
+                                            </li>
+                                            {% endif %}
+                                            <li><a class="dropdown-item text-danger"
+                                                    href="{% url 'pet_delete' pet.pk %}"><i
+                                                        class="fas fa-trash-alt me-2"></i> Remove Pet</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </section>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<!-- Mobile Bottom Navigation Bar: Moved Outside for better Fixed Positioning -->
+<div class="mobile-bottom-nav d-lg-none">
+    <a href="#overview" class="m-nav-item active">
+        <div class="nav-icon-wrapper">
+            <i class="fas fa-th-large"></i>
+        </div>
+        <span>Home</span>
+    </a>
+    <a href="#scans" class="m-nav-item">
+        <div class="nav-icon-wrapper">
+            <i class="fas fa-bolt"></i>
+        </div>
+        <span>Scans</span>
+    </a>
+
+    <div class="fab-wrapper">
+        <a href="{% url 'pet_create' %}" class="m-nav-fab">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+
+    <a href="#orders" class="m-nav-item">
+        <div class="nav-icon-wrapper">
+            <i class="fas fa-shopping-bag"></i>
+        </div>
+        <span>Orders</span>
+    </a>
+    <a href="#pets" class="m-nav-item">
+        <div class="nav-icon-wrapper">
+            <i class="fas fa-paw"></i>
+        </div>
+        <span>Pets</span>
+    </a>
+</div>
+
+<!-- QR Modal -->
+<div id="qrModal" class="dashboard-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeQRModal()"></div>
+    <div class="modal-content-professional">
+        <div class="modal-header-p">
+            <h5>Smart QR Tag</h5>
+            <button onclick="closeQRModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body-p text-center">
+            <!-- Modal Body Sections -->
+            <div id="modal-step-1">
+                <div id="qrImageContainer" class="qr-preview-box">
+                    <!-- QR Image injected here -->
+                </div>
+                <h6 id="qrPetName" class="mt-3 fw-bold"></h6>
+                <p class="text-muted small">This QR code is unique to your pet's profile.</p>
+                <div class="d-grid gap-2 mt-4">
+                    <a id="downloadQRBtn" href="#" class="btn btn-outline-primary"><i class="fas fa-download me-2"></i>
+                        Download Tag Image</a>
+                    <button onclick="showOrderStep()" class="btn btn-primary"><i class="fas fa-shopping-bag me-2"></i>
+                        Order Smart Collar</button>
+                </div>
+                <div class="mt-3 pt-3 border-top">
+                    <a id="deletePetModalBtn" href="#" class="text-danger small text-decoration-none fw-bold">
+                        <i class="fas fa-trash-alt me-1"></i> Remove this Pet
+                    </a>
+                </div>
+            </div>
+
+            <div id="modal-step-2" style="display: none; text-align: left;">
+                <div class="mb-3 d-flex align-items-center">
+                    <button onclick="showQRStep()" class="btn btn-link text-dark p-0 me-2"><i
+                            class="fas fa-arrow-left"></i></button>
+                    <h6 class="mb-0 fw-bold">Select Smart Collar Design</h6>
+                </div>
+
+                <div class="design-selection-grid mb-4">
+                    <div class="design-option active" onclick="selectDesign('Classic', this)">
+                        <div class="design-preview collar-classic">
+                            <div class="collar-tag-mock"><img class="modal-qr-mini" src="" alt="QR"></div>
+                        </div>
+                        <span>Classic</span>
+                    </div>
+                    <div class="design-option" onclick="selectDesign('Sporty', this)">
+                        <div class="design-preview collar-sporty">
+                            <div class="collar-tag-mock"><img class="modal-qr-mini" src="" alt="QR"></div>
+                        </div>
+                        <span>Sporty</span>
+                    </div>
+                    <div class="design-option" onclick="selectDesign('Luxury', this)">
+                        <div class="design-preview collar-luxury">
+                            <div class="collar-tag-mock"><img class="modal-qr-mini" src="" alt="QR"></div>
+                        </div>
+                        <span>Luxury</span>
+                    </div>
+                    <div class="design-option" onclick="selectDesign('Glow', this)">
+                        <div class="design-preview collar-glow">
+                            <div class="collar-tag-mock"><img class="modal-qr-mini" src="" alt="QR"></div>
+                        </div>
+                        <span>Glow</span>
+                    </div>
+                </div>
+
+                <form id="order-form-modal">
+                    {% csrf_token %}
+                    <input type="hidden" name="pet_id" id="order-pet-id">
+                    <input type="hidden" name="design" id="order-design-val" value="Classic">
+
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted">Full Name</label>
+                        <input type="text" name="full_name" class="form-control form-control-sm" required
+                            placeholder="Enter name">
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted">Phone Number</label>
+                        <input type="text" name="phone_number" class="form-control form-control-sm" required
+                            placeholder="Enter number">
+                    </div>
+                    <div class="mb-3">
+                        <label class="small fw-bold text-muted">Shipping Address</label>
+                        <textarea name="shipping_address" class="form-control form-control-sm" rows="2" required
+                            placeholder="Full address"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <div class="alert alert-info py-2 px-3 small border-0 mb-0">
+                            <strong><i class="fas fa-truck"></i> Cash on Delivery Only</strong><br>
+                            Pay when the collar arrives at your door.
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary" id="submit-order-btn">Confirm COD Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Cancel Modal -->
+<div id="cancelOrderModal" class="dashboard-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeCancelModal()"></div>
+    <div class="modal-content-professional" style="max-width: 400px;">
+        <div class="modal-header-p">
+            <h5>Confirm Cancellation</h5>
+            <button onclick="closeCancelModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body-p text-center py-4">
+            <div class="mb-3 text-danger">
+                <i class="fas fa-exclamation-circle fa-3x"></i>
+            </div>
+            <h6 class="fw-bold">Are you sure you want to cancel?</h6>
+            <p class="text-muted small px-3">Once cancelled, you won't be able to undo this action. Your refund (if any)
+                will be processed as per policy.</p>
+            <div class="d-flex gap-2 mt-4 px-3">
+                <button onclick="closeCancelModal()" class="btn btn-light flex-grow-1 fw-bold border"
+                    style="color: #212121;">Don't Cancel</button>
+                <a id="finalCancelBtn" href="#" class="btn btn-danger flex-grow-1 fw-bold">Cancel Order</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scan Delete Modal -->
+<div id="deleteScanModal" class="dashboard-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeDeleteScanModal()"></div>
+    <div class="modal-content-professional" style="max-width: 400px;">
+        <div class="modal-header-p">
+            <h5>Delete Scan History</h5>
+            <button onclick="closeDeleteScanModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body-p text-center py-4">
+            <div class="mb-3 text-danger">
+                <i class="fas fa-trash-alt fa-3x"></i>
+            </div>
+            <h6 class="fw-bold">Delete this scan history?</h6>
+            <p class="text-muted small px-3">Are you sure you want to delete this scan record? This action cannot be
+                undone.</p>
+            <div class="d-flex gap-2 mt-4 px-3">
+                <button onclick="closeDeleteScanModal()" class="btn btn-light flex-grow-1 fw-bold border"
+                    style="color: #212121;">Go Back</button>
+                <form id="finalDeleteScanForm" method="POST" class="flex-grow-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">Yes, Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Order Delete Modal -->
+<div id="deleteOrderModal" class="dashboard-modal" style="display: none;">
+    <div class="modal-overlay" onclick="closeDeleteOrderModal()"></div>
+    <div class="modal-content-professional" style="max-width: 400px;">
+        <div class="modal-header-p">
+            <h5>Remove Order History</h5>
+            <button onclick="closeDeleteOrderModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body-p text-center py-4">
+            <div class="mb-3 text-danger">
+                <i class="fas fa-trash-alt fa-3x"></i>
+            </div>
+            <h6 class="fw-bold">Remove this order from history?</h6>
+            <p class="text-muted small px-3">This will permanently remove the record of this cancelled order from your
+                dashboard.</p>
+            <div class="d-flex gap-2 mt-4 px-3">
+                <button onclick="closeDeleteOrderModal()" class="btn btn-light flex-grow-1 fw-bold border"
+                    style="color: #212121;">Go Back</button>
+                <form id="finalDeleteOrderForm" method="POST" class="flex-grow-1">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger w-100 fw-bold">Remove</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    let currentPetQR = '';
+
+    function confirmCancelOrder(cancelUrl) {
+        const modal = document.getElementById('cancelOrderModal');
+        const cancelBtn = document.getElementById('finalCancelBtn');
+        cancelBtn.href = cancelUrl;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeCancelModal() {
+        document.getElementById('cancelOrderModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function confirmDeleteScan(deleteUrl) {
+        const modal = document.getElementById('deleteScanModal');
+        const form = document.getElementById('finalDeleteScanForm');
+        form.action = deleteUrl;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteScanModal() {
+        document.getElementById('deleteScanModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function confirmDeleteOrder(deleteUrl) {
+        const modal = document.getElementById('deleteOrderModal');
+        const form = document.getElementById('finalDeleteOrderForm');
+        form.action = deleteUrl;
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeDeleteOrderModal() {
+        document.getElementById('deleteOrderModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.qr-modal-trigger').forEach(trigger => {
+            trigger.addEventListener('click', function () {
+                const data = this.dataset;
+                openQRModal(data.image, data.qr, data.download, data.name, data.id, data.delete, data.order);
+            });
+        });
+    });
+
+    function openQRModal(petImageUrl, qrImageUrl, downloadUrl, petName, petId, deleteUrl, startAtOrder = false) {
+        currentPetQR = qrImageUrl;
+        const modal = document.getElementById('qrModal');
+        const container = document.getElementById('qrImageContainer');
+        const nameText = document.getElementById('qrPetName');
+        const downloadBtn = document.getElementById('downloadQRBtn');
+        const deleteBtn = document.getElementById('deletePetModalBtn');
+        const petIdInput = document.getElementById('order-pet-id');
+
+        container.innerHTML = `<img src="${qrImageUrl}" alt="Pet QR Code" class="img-fluid" style="max-width: 200px;">`;
+        nameText.textContent = `${petName}'s Security Tag`;
+        downloadBtn.href = downloadUrl;
+        deleteBtn.href = deleteUrl;
+        petIdInput.value = petId;
+
+        // Update mini QR in design previews
+        document.querySelectorAll('.modal-qr-mini').forEach(img => {
+            img.src = qrImageUrl;
+        });
+
+        if (startAtOrder === "true" || startAtOrder === true) {
+            showOrderStep();
+        } else {
+            showQRStep();
+        }
+
+        modal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function showQRStep() {
+        document.getElementById('modal-step-1').style.display = 'block';
+        document.getElementById('modal-step-2').style.display = 'none';
+    }
+
+    function showOrderStep() {
+        document.getElementById('modal-step-1').style.display = 'none';
+        document.getElementById('modal-step-2').style.display = 'block';
+    }
+
+    function selectDesign(designName, element) {
+        document.querySelectorAll('.design-option').forEach(opt => opt.classList.remove('active'));
+        element.classList.add('active');
+        document.getElementById('order-design-val').value = designName;
+    }
+
+    document.getElementById('order-form-modal').onsubmit = function (e) {
+        e.preventDefault();
+        const btn = document.getElementById('submit-order-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+        const formData = new FormData(this);
+        fetch('{% url "place_order" %}', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    window.location.href = data.redirect_url;
+                } else {
+                    alert(data.message);
+                    btn.disabled = false;
+                    btn.textContent = 'Confirm COD Order';
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                alert('Something went wrong. Please try again.');
+                btn.disabled = false;
+                btn.textContent = 'Confirm COD Order';
+            });
+    };
+
+    function closeQRModal() {
+        const modal = document.getElementById('qrModal');
+        modal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Scroll to section handling
+    document.querySelectorAll('.nav-item-link, .m-nav-item').forEach(link => {
+        link.addEventListener('click', function (e) {
+            const targetId = this.getAttribute('href');
+            if (targetId && targetId.startsWith('#')) {
+                e.preventDefault();
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    const headerOffset = 100;
+                    const elementPosition = targetElement.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                }
+
+                // Active state handling
+                document.querySelectorAll('.nav-item-link, .m-nav-item').forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            }
+        });
+    });
+</script>
+
+<style>
+    .dashboard-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(4px);
+    }
+
+    .modal-content-professional {
+        position: relative;
+        background: white;
+        width: 95%;
+        max-width: 450px;
+        border-radius: 16px;
+        box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+    }
+
+    .modal-header-p {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-header-p h5 {
+        margin: 0;
+        font-weight: 800;
+        font-size: 16px;
+    }
+
+    .modal-header-p button {
+        background: none;
+        border: none;
+        color: #878787;
+        font-size: 18px;
+    }
+
+    .modal-body-p {
+        padding: 24px;
+        max-height: 85vh;
+        overflow-y: auto;
+    }
+
+    .qr-preview-box {
+        background: #f8fafc;
+        padding: 20px;
+        border-radius: 12px;
+        border: 1px solid #f1f5f9;
+        display: inline-block;
+    }
+
+    .design-selection-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    .design-option {
+        border: 2px solid #f0f0f0;
+        border-radius: 12px;
+        padding: 10px;
+        cursor: pointer;
+        text-align: center;
+        transition: 0.2s;
+    }
+
+    .design-option:hover {
+        border-color: #2874f033;
+    }
+
+    .design-option.active {
+        border-color: #2874f0;
+        background: #f5faff;
+    }
+
+    .design-option span {
+        font-size: 11px;
+        font-weight: 800;
+        text-transform: uppercase;
+        color: #212121;
+        margin-top: 8px;
+        display: block;
+    }
+
+    .design-preview {
+        height: 36px;
+        border-radius: 18px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .collar-tag-mock {
+        width: 28px;
+        height: 28px;
+        background: white;
+        border-radius: 50%;
+        border: 2px solid #cbd5e1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-qr-mini {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .collar-classic {
+        background: #1e293b;
+    }
+
+    .collar-sporty {
+        background: #ef4444;
+    }
+
+    .collar-luxury {
+        background: linear-gradient(135deg, #af8d1d, #fcd34d, #af8d1d);
+    }
+
+    .collar-glow {
+        background: #4ade80;
+        box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+    }
+
+    .alert-info {
+        background: #e3f2fd;
+        color: #1e88e5;
+    }
+</style>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1 class="fade-up delay-1">Your pet's safety, <br><span class="text-gradient">digitally secured.</span></h1>
+        <p class="fade-up delay-2">The world's most intuitive QR-based pet recovery system. No batteries, no
+            subscriptions, just peace of mind.</p>
+        <div class="fade-up delay-3">
+            <a href="{% url 'regi' %}" class="btn-primary" style="padding: 16px 36px; font-size: 16px;">Create Tag —
+                It's Free</a>
+        </div>
+    </div>
+    <div class="hero-visual">
+        <div class="qr-mockup">
+            <img src="https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=1000&auto=format&fit=crop"
+                alt="Dog">
+        </div>
+    </div>
+</section>
+<section class="section-padding">
+    <h2 class="reveal"
+        style="text-align: center; font-size: clamp(28px, 4vw, 36px); font-weight: 800; margin-bottom: 10px;">Better
+        than a microchip.</h2>
+    <p class="reveal" style="text-align: center; color: var(--slate); margin-bottom: 40px;">Technology built for the
+        modern pet parent.</p>
+    <div class="grid">
+        <div class="card reveal delay-1">
+            <div class="card-icon">⚡</div>
+            <h3>Instant Alert</h3>
+            <p>Get a GPS-tagged notification the second someone scans your pet's collar.</p>
+        </div>
+        <div class="card reveal delay-2">
+            <div class="card-icon">🔒</div>
+            <h3>Privacy Control</h3>
+            <p>Switch between 'Public' and 'Private' modes instantly from your phone.</p>
+        </div>
+        <div class="card reveal delay-3">
+            <div class="card-icon">🌍</div>
+            <h3>Global Network</h3>
+            <p>Works worldwide without any app installation required for the finder.</p>
+        </div>
+    </div>
+</section>
+
+
+
+<section class="section-padding" style="background: #0B1120; color: white; text-align: center;">
+    <div class="container" style="max-width: 800px; margin: 0 auto;">
+        <h2 class="reveal" style="font-size: clamp(32px, 5vw, 48px); font-weight: 800; margin-bottom: 24px;">Ready to
+            provide the best protection for your pet?</h2>
+        <p class="reveal" style="color: #94A3B8; font-size: 18px; margin-bottom: 40px;">Join thousands of pet owners
+            who trust PetQR to keep their furry friends safe.</p>
+        <div class="reveal" style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'regi' %}" class="btn-primary">Get Started — Free</a>
+            <a href="{% url 'dashboard' %}" class="btn-secondary"
+                style="border-color: rgba(255,255,255,0.2); color: white;">Shop Premium Collars</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

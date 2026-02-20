@@ -1,0 +1,393 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load pet_extras %}
+
+{% block title %}{{ pet.name }} | Smart Pet QR{% endblock %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+<style>
+    :root {
+        --accent: #F97316;
+        /* Professional Orange */
+        --accent-alert: #EF4444;
+        --page-bg: #F8FAFC;
+        --card-bg: #FFFFFF;
+        --text-primary: #0F172A;
+        --text-secondary: #64748B;
+        --success: #10B981;
+    }
+
+    body {
+        background-color: var(--page-bg);
+        color: var(--text-primary);
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        padding-bottom: 90px;
+    }
+
+    /* Reset Base Styles */
+    .container {
+        padding: 0 !important;
+        max-width: 100%;
+    }
+
+    /* Full Screen Hero Image */
+    .hero-container {
+        position: relative;
+        height: 50vh;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .hero-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    /* Overlay Gradient for Text Readability - LIGHT */
+    .hero-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 60%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 10%, transparent);
+    }
+
+    /* Pet Info on Hero */
+    .hero-content {
+        position: absolute;
+        bottom: 30px;
+        left: 20px;
+        z-index: 10;
+        width: calc(100% - 40px);
+        color: white;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 50px;
+        font-size: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        letter-spacing: 1px;
+    }
+
+    .status-lost {
+        background: var(--accent-alert);
+        color: white;
+        box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        animation: pulse infinite 2s;
+    }
+
+    .status-safe {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .pet-title {
+        font-size: 42px;
+        font-weight: 800;
+        line-height: 1;
+        margin: 0;
+        text-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .pet-subtitle {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.9);
+        margin-top: 5px;
+        font-weight: 500;
+    }
+
+    /* Main Content Card - LIGHT */
+    .content-wrapper {
+        padding: 25px 20px 40px;
+        background: var(--page-bg);
+        border-radius: 30px 30px 0 0;
+        margin-top: -20px;
+        position: relative;
+        z-index: 20;
+    }
+
+    /* Modern Grid Stats */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin-bottom: 30px;
+    }
+
+    .stat-item {
+        background: var(--card-bg);
+        padding: 15px 10px;
+        border-radius: 16px;
+        text-align: center;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.01);
+    }
+
+    .stat-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        color: var(--text-secondary);
+        font-weight: 700;
+        margin-bottom: 4px;
+    }
+
+    .stat-val {
+        font-size: 15px;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    /* Action Buttons (Floating) - LIGHT */
+    .action-bar {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        display: flex;
+        gap: 12px;
+        z-index: 100;
+    }
+
+    .btn-glass {
+        flex: 1;
+        padding: 18px;
+        border-radius: 18px;
+        text-align: center;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        transition: transform 0.2s;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary-action {
+        background: var(--text-primary);
+        color: white;
+    }
+
+    .btn-alert {
+        background: var(--accent-alert);
+        color: white;
+        box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-whatsapp {
+        background: #25D366;
+        color: white;
+    }
+
+    .scan-alert-box {
+        background: #FEF2F2;
+        border: 1px solid #FECACA;
+        color: #B91C1C;
+        padding: 15px;
+        border-radius: 16px;
+        font-size: 13px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    /* Info Sections */
+    .details-section {
+        margin-bottom: 30px;
+    }
+
+    .section-header {
+        font-size: 14px;
+        font-weight: 800;
+        margin-bottom: 15px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .info-tile {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 20px;
+        margin-bottom: 15px;
+        position: relative;
+        border: 1px solid #E2E8F0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    }
+
+    .info-tile h4 {
+        margin: 0 0 6px 0;
+        font-size: 13px;
+        color: var(--text-secondary);
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    .info-tile p {
+        margin: 0;
+        font-size: 16px;
+        color: var(--text-primary);
+        font-weight: 500;
+        line-height: 1.5;
+    }
+
+    .id-tag {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-family: monospace;
+        background: #F1F5F9;
+        color: var(--text-secondary);
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Visual -->
+<div class="hero-container">
+    {% if pet.image %}
+    <img src="{{ pet.image|safe_url }}" class="hero-img" alt="{{ pet.name }}">
+    {% else %}
+    <div class="hero-img" style="background: #CBD5E1; display: flex; align-items: center; justify-content: center;">
+        <i class="fas fa-paw fa-4x" style="color: #94A3B8;"></i>
+    </div>
+    {% endif %}
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content animate__animated animate__fadeInUp">
+        <div>
+            {% if pet.lost_status %}
+            <div class="status-badge status-lost">
+                <i class="fas fa-exclamation-circle"></i> LOST MODE ACTIVE
+            </div>
+            {% else %}
+            <div class="status-badge status-safe">
+                <i class="fas fa-shield-alt"></i> PROTECTED
+            </div>
+            {% endif %}
+        </div>
+        <h1 class="pet-title">{{ pet.name }}</h1>
+        <div class="pet-subtitle">{{ pet.breed }} • {{ pet.age }}</div>
+    </div>
+</div>
+
+<!-- Main Details -->
+<div class="content-wrapper">
+
+    {% if pet.lost_status %}
+    <div class="scan-alert-box animate__animated animate__fadeIn">
+        <i class="fas fa-bell" style="font-size: 18px; margin-top: 2px;"></i>
+        <div>
+            <strong>ATTENTION:</strong> The owner has marked this pet as MISSING. Scanning this QR code has sent your
+            approximate location to the owner. Please contact them below.
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="stats-grid">
+        <div class="stat-item">
+            <div class="stat-label">Gender</div>
+            <div class="stat-val">{{ pet.gender }}</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Color</div>
+            <div class="stat-val">{{ pet.color }}</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-label">Vaccine</div>
+            <div class="stat-val" style="color: var(--success);">
+                {% if pet.vaccination_details %}Up to Date{% else %}--{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Medical & Emergency -->
+    <div class="details-section">
+        <div class="section-header">
+            <i class="fas fa-file-shield"></i>
+            Safety Profile
+        </div>
+
+        {% if pet.medical_conditions %}
+        <div class="info-tile">
+            <h4>Medical Conditions</h4>
+            <div class="id-tag"><i class="fas fa-heartbeat" style="color:#EF4444;"></i></div>
+            <p>{{ pet.medical_conditions }}</p>
+        </div>
+        {% endif %}
+
+        {% if pet.vaccination_details %}
+        <div class="info-tile">
+            <h4>Latest Vaccination</h4>
+            <p>{{ pet.vaccination_details }}</p>
+        </div>
+        {% endif %}
+
+        <div class="info-tile">
+            <h4>Microchip No.</h4>
+            <div class="id-tag"><i class="fas fa-microchip"></i></div>
+            <p>{{ pet.microchip_number|default:"Not chipped" }}</p>
+        </div>
+
+        {% if pet.emergency_contact and pet.emergency_contact != display_phone %}
+        <div class="info-tile" style="border-left: 4px solid #F97316;">
+            <h4>Emergency Contact</h4>
+            <p>{{ pet.emergency_contact }}</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div style="height: 60px;"></div> <!-- Spacing -->
+
+    <div style="text-align: center; color: var(--text-secondary); font-size: 11px; font-weight:700; opacity: 0.5;">
+        SECURE ID: {{ pet.unique_slug|upper }}
+    </div>
+
+</div>
+
+<!-- Floating Action Bar -->
+<div class="action-bar animate__animated animate__fadeInUp animate__delay-1s">
+    {% if display_phone %}
+    <a href="tel:{{ display_phone|cut:' ' }}"
+        class="btn-glass {% if pet.lost_status %}btn-alert{% else %}btn-primary-action{% endif %}">
+        <i class="fas fa-phone-alt"></i>
+        {% if pet.lost_status %}REPORT FOUND{% else %}CALL OWNER{% endif %}
+    </a>
+    <a href="https://wa.me/{{ display_phone|cut:' '|cut:'+' }}" class="btn-glass btn-whatsapp"
+        style="flex: 0 0 65px; font-size: 24px;">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+    {% else %}
+    <div class="btn-glass" style="background:#E2E8F0; color:#64748B;">
+        <i class="fas fa-user-lock"></i> Private
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}
+
+{% block footer %}{% endblock %}

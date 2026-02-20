@@ -1,0 +1,277 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}PetQR — Register{% endblock %}
+{% block footer %}
+
+<div class="minimal-footer animate-entry delay-5">
+    <p>&copy; 2026 PetQR Inc. &bull; <a href="#">Privacy</a> &bull; <a href="#">Terms</a></p>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Auth Wrapper to center content between header and footer */
+    .auth-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex: 1;
+        padding: 40px 20px;
+        width: 100%;
+    }
+
+    .auth-card {
+        background: white;
+        width: 100%;
+        max-width: 420px;
+        padding: 40px 30px;
+        border-radius: 28px;
+        box-shadow: 0 15px 35px rgba(15, 23, 42, 0.05);
+        transition: transform 0.3s ease;
+        /* Initial State for Animation */
+        opacity: 0;
+        transform: translateY(30px);
+        animation: cardEntrance 0.8s var(--ease-out-expo) forwards;
+    }
+
+    @keyframes cardEntrance {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .logo {
+        font-size: 20px;
+        font-weight: 800;
+        text-align: center;
+        margin-bottom: 10px;
+        color: var(--dark);
+    }
+
+    h2 {
+        font-size: 26px;
+        font-weight: 800;
+        margin-bottom: 30px;
+        text-align: center;
+        letter-spacing: -0.8px;
+        color: var(--dark);
+    }
+
+    /* Hides all Django help text/lists as requested */
+    .helptext,
+    form ul:not(.errorlist),
+    form li:not(.errorlist li) {
+        display: none !important;
+    }
+
+    form p {
+        margin-bottom: 18px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    :root {
+        --primary: #FF5C00;
+        --dark: #0F172A;
+        --bg: #F8FAFC;
+        --input-bg: #F8FAFC;
+        --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    label {
+        display: block;
+        font-weight: 700;
+        font-size: 13px;
+        margin-bottom: 8px;
+        color: var(--dark);
+        opacity: 0.9;
+    }
+
+    input {
+        width: 100%;
+        padding: 14px 16px;
+        border-radius: 14px;
+        border: 1.5px solid #E2E8F0;
+        background: var(--bg);
+        /* Using global bg var */
+        font-size: 16px;
+        transition: all 0.2s ease;
+        color: var(--dark);
+        outline: none;
+    }
+
+    input:focus {
+        border-color: var(--primary);
+        background: white;
+        box-shadow: 0 0 0 4px rgba(255, 92, 0, 0.1);
+    }
+
+    .btn-auth {
+        width: 100%;
+        background: var(--dark);
+        color: white;
+        padding: 16px;
+        border-radius: 14px;
+        border: none;
+        font-weight: 700;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 12px;
+        transition: all 0.3s ease;
+    }
+
+    .btn-auth:hover {
+        background: #FB641B;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-auth:active {
+        transform: translateY(0);
+    }
+
+    .footer-link {
+        text-align: center;
+        margin-top: 25px;
+        font-size: 14px;
+        color: #64748B;
+    }
+
+    .footer-link a {
+        color: var(--primary);
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    /* Error styling */
+    .errorlist {
+        list-style: none;
+        color: #EF4444;
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    /* --- ANIMATION UTILITIES --- */
+    .animate-entry {
+        opacity: 0;
+        transform: translateY(15px);
+        animation: fadeInUp 0.6s var(--ease-out-expo) forwards;
+    }
+
+    .delay-1 {
+        animation-delay: 0.1s;
+    }
+
+    .delay-2 {
+        animation-delay: 0.2s;
+    }
+
+    .delay-3 {
+        animation-delay: 0.3s;
+    }
+
+    .delay-4 {
+        animation-delay: 0.4s;
+    }
+
+    .delay-5 {
+        animation-delay: 0.5s;
+    }
+
+    @keyframes fadeInUp {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* --- RESPONSIVE MEDIA QUERIES --- */
+    /* For Small Mobile Devices */
+    @media (max-width: 400px) {
+        .auth-card {
+            padding: 30px 20px;
+            border-radius: 20px;
+        }
+
+        h2 {
+            font-size: 22px;
+        }
+
+        input {
+            padding: 12px 14px;
+        }
+    }
+
+    /* For Tablets and Desktop */
+    @media (min-width: 768px) {
+        .auth-card:hover {
+            transform: translateY(-5px);
+        }
+    }
+
+    /* Landscape Mode Fix */
+    @media (max-height: 500px) {
+        .auth-wrapper {
+            align-items: flex-start;
+        }
+
+        .auth-card {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+    }
+
+    .minimal-footer {
+        text-align: center;
+        padding: 20px;
+        color: var(--slate);
+        font-size: 13px;
+        width: 100%;
+    }
+
+    .minimal-footer p {
+        margin: 0;
+        opacity: 0.8;
+    }
+
+    .minimal-footer a {
+        color: var(--slate);
+        text-decoration: none;
+        transition: color 0.2s;
+        font-weight: 600;
+    }
+
+    .minimal-footer a:hover {
+        color: var(--primary);
+    }
+</style>
+{% endblock %}
+{% block content %}
+<div class="auth-wrapper" style="padding: clamp(15px, 5vw, 40px);">
+    <div class="auth-card">
+        <div class="logo animate-entry"><span style="color: var(--primary)">●</span> PetQR</div>
+        <h2 class="animate-entry delay-1">Create Account</h2>
+        <form method="POST" class="animate-entry delay-2">
+            {% csrf_token %}
+            {% for field in form %}
+            <div class="form-group mb-3">
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                <div class="error-text" style="color: var(--error); font-size: 12px; margin-top: 4px;">
+                    {{ field.errors.0 }}
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn-auth animate-entry delay-3">Sign Up</button>
+        </form>
+        <div class="footer-link animate-entry delay-4">
+            Already have an account? <a href="{% url 'login' %}">Login</a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

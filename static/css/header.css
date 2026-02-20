@@ -1,0 +1,182 @@
+/* --- HEADER & NAV --- */
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 8%;
+    background: rgba(248, 250, 252, 0.6);
+    /* More transparency for glass effect */
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 9999;
+    transition: all 0.4s var(--ease-out-expo);
+    border-bottom: 1px solid rgba(0, 0, 0, 0);
+}
+
+header.scrolled {
+    padding: 12px 8%;
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--dark);
+    z-index: 10001;
+}
+
+nav {
+    display: flex;
+    gap: 40px;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: var(--dark);
+    font-weight: 600;
+    font-size: 14px;
+    opacity: 0.7;
+    transition: 0.3s;
+    position: relative;
+}
+
+nav a:hover {
+    opacity: 1;
+    color: var(--primary);
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background: var(--primary);
+    transition: width 0.3s var(--ease-out-expo);
+}
+
+nav a:hover::after {
+    width: 100%;
+}
+
+/* Header Button Hover Override */
+nav .btn-primary:hover {
+    background: #1e293b !important;
+    /* Darker slate hover for the dashboard button */
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 3px;
+    cursor: pointer;
+    z-index: 10001;
+    padding: 6px;
+}
+
+.menu-toggle span {
+    width: 16px;
+    height: 1.5px;
+    background: var(--dark);
+    transition: 0.3s var(--ease-out-expo);
+    border-radius: 4px;
+}
+
+@media (max-width: 968px) {
+    header {
+        padding: 15px 6%;
+    }
+
+    .menu-toggle {
+        display: flex;
+    }
+
+    /* 1. Mobile Menu Drawer Animation */
+    nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        /* Hidden completely */
+        width: 100%;
+        /* Full width on mobile for better UX */
+        height: 100vh;
+        background: rgba(255, 255, 255, 0.98);
+        flex-direction: column;
+        justify-content: center;
+        gap: 30px;
+        box-shadow: none;
+        transition: right 0.5s var(--ease-out-expo);
+        backdrop-filter: blur(10px);
+    }
+
+    nav.active {
+        right: 0;
+    }
+
+    /* Staggered Links for Mobile */
+    nav a,
+    nav .btn-primary {
+        opacity: 0;
+        transform: translateY(20px);
+        /* Move up instead of side */
+        transition: 0.4s ease;
+        font-size: 20px;
+        /* Slightly smaller font for mobile links */
+    }
+
+    nav.active a,
+    nav.active .btn-primary {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    nav.active a:nth-child(1) {
+        transition-delay: 0.1s;
+    }
+
+    nav.active a:nth-child(2) {
+        transition-delay: 0.2s;
+    }
+
+    nav.active a:nth-child(3) {
+        transition-delay: 0.3s;
+    }
+
+    nav.active a:nth-child(4) {
+        transition-delay: 0.4s;
+    }
+
+    nav.active a:nth-child(5) {
+        transition-delay: 0.5s;
+    }
+
+    /* Menu Toggle Animation */
+    .menu-toggle.active span:nth-child(1) {
+        transform: translateY(4.5px) rotate(45deg);
+        width: 18px;
+    }
+
+    .menu-toggle.active span:nth-child(2) {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+
+    .menu-toggle.active span:nth-child(3) {
+        transform: translateY(-4.5px) rotate(-45deg);
+        width: 18px;
+    }
+}

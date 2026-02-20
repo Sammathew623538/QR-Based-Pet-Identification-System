@@ -1,0 +1,27 @@
+<header id="header">
+    <div class="logo">
+        <span style="color: var(--primary)">●</span> PetQR
+    </div>
+    {% if not is_public_view %}
+    <div class="menu-toggle" id="mobile-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <nav id="nav-menu">
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'how_it_works' %}">How it works</a>
+        <a href="{% url 'about' %}">About</a>
+        {% if user.is_authenticated %}
+        {% if user.is_staff %}
+        <a href="{% url 'staff_dashboard' %}" style="color: var(--primary); font-weight: 700;">Admin Panel</a>
+        {% endif %}
+        <a href="{% url 'profile' %}">Profile</a>
+        <a href="{% url 'dashboard' %}" class="btn-primary">Dashboard</a>
+        {% else %}
+        <a href="{% url 'login' %}" class="btn-secondary" style="margin-right: 10px;">Login</a>
+        <a href="{% url 'regi' %}" class="btn-primary">Get Started</a>
+        {% endif %}
+    </nav>
+    {% endif %}
+</header>

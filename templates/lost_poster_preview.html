@@ -1,0 +1,402 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Generating Missing Poster - {{ pet.name }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --primary-red: #D32F2F;
+        --dark-bg: #121212;
+    }
+
+    .preview-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    /* Loading State Styles */
+    #loading-state {
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .loader-box {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        margin: 0 auto 30px;
+    }
+
+    .circle-loader {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-red);
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        animation: spin 1s linear infinite;
+    }
+
+    .paw-icon {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 40px;
+        color: var(--primary-red);
+        animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+
+    @keyframes pulse {
+        0% {
+            opacity: 0.5;
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+
+        50% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        100% {
+            opacity: 0.5;
+            transform: translate(-50%, -50%) scale(0.8);
+        }
+    }
+
+    .loading-text h2 {
+        font-weight: 800;
+        margin-bottom: 10px;
+        letter-spacing: -1px;
+    }
+
+    .progress-bar-container {
+        width: 100%;
+        background: #eee;
+        height: 6px;
+        border-radius: 10px;
+        margin-top: 20px;
+        overflow: hidden;
+    }
+
+    #progress-fill {
+        height: 100%;
+        background: var(--primary-red);
+        width: 0%;
+        transition: width 0.1s linear;
+    }
+
+    /* Preview State Styles */
+    #preview-state {
+        display: none;
+        width: 100%;
+        max-width: 900px;
+        animation: fadeInUp 0.8s ease-out;
+    }
+
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive Adjustments */
+    .poster-preview-card {
+        background: white;
+        border-radius: 24px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        overflow: hidden;
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        /* Ensure full width */
+    }
+
+    @media (max-width: 992px) {
+        .poster-preview-card {
+            flex-direction: column;
+            max-width: 600px;
+            /* Limit width on tablets */
+            margin: 0 auto;
+        }
+
+        .poster-visual {
+            padding: 30px 20px;
+            min-height: 300px;
+        }
+
+        .poster-mockup {
+            max-width: 280px;
+            /* Smaller mockup on mobile */
+        }
+
+        .poster-info {
+            padding: 30px 20px;
+            text-align: center;
+            align-items: center;
+            /* Center content on mobile */
+        }
+
+        .feature-list {
+            text-align: left;
+            /* Keep features aligned left but block centered */
+            display: inline-block;
+        }
+
+        .poster-info h1 {
+            font-size: 24px;
+            /* Smaller title */
+        }
+
+        .btn-download-premium {
+            padding: 12px 20px;
+            font-size: 14px;
+            width: 100%;
+            /* Full width on mobile */
+            max-width: 280px;
+        }
+    }
+
+    /* Container adjustments */
+    .preview-container {
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 80px 15px 40px;
+        /* More top padding for navbar */
+    }
+
+    .poster-visual {
+        flex: 1.2;
+        background: #f8f9fa;
+        padding: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .poster-mockup {
+        width: 100%;
+        max-width: 400px;
+        aspect-ratio: 1 / 1.41;
+        background: white;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        border: 1px solid #ddd;
+        position: relative;
+        padding: 5px;
+    }
+
+    .poster-mockup img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .poster-info {
+        flex: 1;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .premium-badge {
+        display: inline-block;
+        background: rgba(46, 125, 50, 0.1);
+        color: #2E7D32;
+        padding: 6px 12px;
+        border-radius: 100px;
+        font-size: 12px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .poster-info h1 {
+        font-weight: 800;
+        margin-bottom: 15px;
+        line-height: 1.1;
+    }
+
+    .poster-info p {
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .feature-list {
+        margin-bottom: 30px;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    .feature-item i {
+        color: #2E7D32;
+        width: 20px;
+    }
+
+    .btn-download-premium {
+        background: var(--primary-red);
+        color: white;
+        border: none;
+        padding: 18px 30px;
+        border-radius: 14px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        transition: all 0.3s;
+        text-decoration: none;
+        box-shadow: 0 10px 20px rgba(211, 47, 47, 0.3);
+    }
+
+    .btn-download-premium:hover {
+        background: #B71C1C;
+        transform: translateY(-3px);
+        box-shadow: 0 15px 30px rgba(211, 47, 47, 0.4);
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="preview-container">
+    <!-- Loading Screen -->
+    <div id="loading-state">
+        <div class="loader-box">
+            <div class="circle-loader"></div>
+            <i class="fas fa-paw paw-icon"></i>
+        </div>
+        <div class="loading-text">
+            <h2>Generating Professional Poster</h2>
+            <p class="text-muted">Analyzing pet details and creating layout...</p>
+        </div>
+        <div class="progress-bar-container">
+            <div id="progress-fill"></div>
+        </div>
+        <div class="mt-3 small text-muted font-monospace" id="status-update">Initializing PDF Engine...</div>
+    </div>
+
+    <!-- Preview Screen -->
+    <div id="preview-state">
+        <div class="poster-preview-card">
+            <div class="poster-visual">
+                <div class="poster-mockup">
+                    <!-- Since we can't easily show a PDF preview without extra libs, we'll use a placeholder or simplified SVG/HTML version, or just the pet image as a teaser -->
+                    <div style="width: 100%; height: 100%; display: flex; flex-direction: column; text-align: center;">
+                        <div
+                            style="background: #D32F2F; color: white; padding: 10px; font-weight: 900; font-size: 20px;">
+                            MISSING</div>
+                        <div
+                            style="padding: 15px; flex-grow: 1; display: flex; align-items: center; justify-content: center;">
+                            {% if pet.image %}
+                            <img src="{{ pet.image.url }}" style="max-height: 200px; border: 3px solid #D32F2F;">
+                            {% else %}
+                            <div style="font-size: 50px;">🐾</div>
+                            {% endif %}
+                        </div>
+                        <div style="padding: 10px; font-weight: bold; border-top: 1px solid #eee;">{{ pet.name }}</div>
+                        <div
+                            style="padding: 10px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                            <img src="{{ pet.qr_code_image.url }}" style="width: 50px;">
+                            <div style="font-size: 8px; text-align: left;">Scan to find owner<br>identification code
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="poster-info">
+                <span class="premium-badge"><i class="fas fa-star me-1"></i> HIGH-RESOLUTION GENERATED</span>
+                <h1>Your Missing Poster is Ready</h1>
+                <p>We've created a high-impact, professional poster for <b>{{ pet.name }}</b>. This PDF is optimized for
+                    both digital sharing and physical printing.</p>
+
+                <div class="feature-list">
+                    <div class="feature-item"><i class="fas fa-check-circle"></i> High-visibility alert banners</div>
+                    <div class="feature-item"><i class="fas fa-check-circle"></i> Integrated secure QR code</div>
+                    <div class="feature-item"><i class="fas fa-check-circle"></i> High-quality image rendering</div>
+                    <div class="feature-item"><i class="fas fa-check-circle"></i> Print-ready A4 format</div>
+                </div>
+
+                <a href="{% url 'generate_lost_poster' pet.pk %}" class="btn-download-premium">
+                    <i class="fas fa-file-download"></i> Download PDF Poster
+                </a>
+
+                <a href="{% url 'dashboard' %}" class="btn btn-link mt-3 text-muted" style="text-decoration: none;">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const loadingState = document.getElementById('loading-state');
+        const previewState = document.getElementById('preview-state');
+        const progressFill = document.getElementById('progress-fill');
+        const statusUpdate = document.getElementById('status-update');
+
+        const tasks = [
+            { t: 10, msg: "Loading pet data..." },
+            { t: 30, msg: "Optimizing images..." },
+            { t: 50, msg: "Generating secure QR links..." },
+            { t: 75, msg: "Applying professional layout..." },
+            { t: 90, msg: "Finalizing high-res PDF..." },
+            { t: 100, msg: "Ready!" }
+        ];
+
+        let progress = 0;
+        const duration = 5000; // 5 seconds
+        const step = 50; // Update every 50ms
+        const increment = 100 / (duration / step);
+
+        const interval = setInterval(() => {
+            progress += increment;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+                setTimeout(() => {
+                    loadingState.style.display = 'none';
+                    previewState.style.display = 'block';
+                }, 500);
+            }
+
+            progressFill.style.width = progress + '%';
+
+            // Update status message
+            const currentTask = tasks.find(task => progress <= task.t) || tasks[tasks.length - 1];
+            statusUpdate.textContent = currentTask.msg;
+        }, step);
+    });
+</script>
+{% endblock %}

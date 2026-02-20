@@ -1,0 +1,1146 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+    :root {
+        --fk-blue: #2874f0;
+        --fk-green: #26a541;
+        --fk-orange: #fb641b;
+        --fk-bg: #f1f3f6;
+        --fk-border: #f0f0f0;
+        --fk-text: #212121;
+        --fk-muted: #878787;
+    }
+
+    body {
+        background-color: var(--fk-bg);
+        font-family: 'Roboto', sans-serif;
+        color: var(--fk-text);
+    }
+
+    .order-detail-wrapper {
+        padding: 20px 0;
+    }
+
+    /* Top Summary Card */
+    .summary-card {
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        padding: 20px 24px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* Flip-style Sections */
+    .fk-section-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .fk-card {
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        padding: 20px 24px;
+        flex: 1;
+    }
+
+    .fk-card-title {
+        font-size: 14px;
+        font-weight: 500;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+        color: var(--fk-text);
+        letter-spacing: 0.5px;
+    }
+
+    /* Delivery Address specifics */
+    .addr-name {
+        font-weight: 500;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .addr-text {
+        font-size: 14px;
+        line-height: 1.4;
+        color: var(--fk-text);
+    }
+
+    .addr-phone {
+        font-weight: 500;
+        margin-top: 10px;
+        font-size: 14px;
+    }
+
+    /* Product Item Card */
+    .product-list-card {
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        margin-bottom: 12px;
+    }
+
+    .product-item-row {
+        padding: 24px;
+        display: grid;
+        grid-template-columns: 100px 1fr 120px 1fr 150px;
+        gap: 24px;
+        align-items: start;
+    }
+
+    .prod-img-box {
+        width: 100px;
+    }
+
+    .prod-name {
+        font-size: 14px;
+        font-weight: 400;
+        color: #212121;
+        margin-bottom: 8px;
+    }
+
+    .prod-sub {
+        font-size: 12px;
+        color: var(--fk-muted);
+        margin-bottom: 12px;
+    }
+
+    .prod-price {
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* Track Status - Flipkart Style Dot Line */
+    .track-container {
+        position: relative;
+        padding-top: 5px;
+    }
+
+    .track-stepper {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+    }
+
+    .track-stepper::before {
+        content: '';
+        position: absolute;
+        top: 6px;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: #f0f0f0;
+    }
+
+    .track-step {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        flex: 1;
+    }
+
+    .track-dot {
+        width: 12px;
+        height: 12px;
+        background: #f0f0f0;
+        border-radius: 50%;
+        margin: 0 auto 12px;
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 1px #f0f0f0;
+    }
+
+    .track-step.active .track-dot {
+        background: var(--fk-green);
+        box-shadow: 0 0 0 1px var(--fk-green);
+    }
+
+    .track-label {
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--fk-muted);
+    }
+
+    .track-step.active .track-label {
+        color: var(--fk-text);
+    }
+
+    .track-update {
+        font-size: 10px;
+        color: var(--fk-muted);
+        margin-top: 4px;
+    }
+
+    /* Actions */
+    .action-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        text-align: right;
+    }
+
+    .fk-link {
+        color: var(--fk-blue);
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 8px;
+    }
+
+    .fk-link:hover {
+        text-decoration: underline;
+    }
+
+    /* Price Card */
+    .price-side-card {
+        background: white;
+        border-radius: 2px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+    }
+
+    .price-head {
+        padding: 13px 24px;
+        border-bottom: 1px solid var(--fk-border);
+        color: var(--fk-muted);
+        text-transform: uppercase;
+        font-weight: 500;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+    }
+
+    .price-body {
+        padding: 24px;
+    }
+
+    .price-ln {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .price-tot {
+        border-top: 1px dashed var(--fk-border);
+        padding-top: 20px;
+        margin-top: 20px;
+        font-weight: 500;
+        font-size: 16px;
+    }
+
+    /* Responsive & Mobile Polishes like Flipkart */
+    @media (max-width: 991px) {
+        .order-detail-wrapper {
+            padding: 0;
+        }
+
+        .container {
+            padding: 0;
+        }
+
+        .summary-card {
+            background: var(--fk-blue);
+            color: white;
+            border-radius: 0;
+            margin: 0;
+            position: sticky;
+            top: 70px;
+            z-index: 1004;
+            padding: 15px 16px;
+        }
+
+        .summary-card h6 {
+            color: white !important;
+            font-size: 14px;
+        }
+
+        .summary-card .fk-link {
+            color: white !important;
+        }
+
+        .summary-card .text-muted {
+            color: rgba(255, 255, 255, 0.8) !important;
+        }
+
+        .fk-section-row {
+            flex-direction: column;
+            padding: 8px;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .fk-card {
+            padding: 16px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .fk-card-title {
+            margin-bottom: 12px;
+            font-size: 12px;
+        }
+
+        .product-item-row {
+            display: flex;
+            flex-direction: column;
+            padding: 16px;
+            gap: 16px;
+        }
+
+        .prod-img-box {
+            width: 60px;
+        }
+
+        /* Mobile Vertical Stepper */
+        .track-container {
+            margin-top: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            width: 100%;
+        }
+
+        .track-stepper {
+            flex-direction: column;
+            gap: 25px;
+            align-items: flex-start;
+            padding-left: 5px;
+        }
+
+        .track-stepper::before {
+            top: 5px;
+            left: 5px;
+            width: 2px;
+            height: calc(100% - 15px);
+            right: auto;
+        }
+
+        .track-step {
+            display: flex;
+            text-align: left;
+            align-items: flex-start;
+            gap: 15px;
+            width: 100%;
+            flex: none;
+        }
+
+        .track-dot {
+            margin: 4px 0 0 0;
+            flex-shrink: 0;
+            width: 10px;
+            height: 10px;
+        }
+
+        .track-label {
+            font-size: 13px;
+            line-height: 1;
+        }
+
+        .track-update {
+            margin-left: auto;
+            margin-top: 0;
+        }
+
+        .action-links {
+            flex-direction: row;
+            justify-content: space-between;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 10px;
+            padding-top: 15px;
+            text-align: left;
+        }
+
+        .action-links .fk-link {
+            justify-content: flex-start;
+            font-size: 13px;
+        }
+
+        .row.mt-1 {
+            padding: 0 8px;
+        }
+
+        .price-side-card {
+            margin-bottom: 20px;
+        }
+    }
+
+    /* Custom Color Themes from PetQR */
+    .c-bar {
+        height: 16px;
+        width: 100%;
+        border-radius: 8px;
+        position: relative;
+    }
+
+    .collar-classic {
+        background: #1e293b !important;
+    }
+
+    .collar-sporty {
+        background: #ef4444 !important;
+    }
+
+    .collar-luxury {
+        background: linear-gradient(135deg, #af8d1d, #fbbf24) !important;
+    }
+
+    .collar-glow {
+        background: #4ade80 !important;
+    }
+
+    .c-tag {
+        width: 24px;
+        height: 24px;
+        background: white;
+        border-radius: 50%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    /* Review Modal Specifics */
+    .fk-review-modal {
+        display: none;
+        position: fixed;
+        z-index: 2000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(2px);
+    }
+
+    .fk-review-content {
+        background-color: #fff;
+        margin: 50px auto;
+        width: 95%;
+        max-width: 450px;
+        border-radius: 4px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        animation: slideDown 0.2s ease-out;
+    }
+
+    @keyframes slideDown {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .fk-review-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid #f0f0f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .fk-review-body {
+        padding: 20px;
+    }
+
+    .stars-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-start;
+        gap: 12px;
+        margin-bottom: 15px;
+    }
+
+    .stars-rating input {
+        display: none;
+    }
+
+    .stars-rating label {
+        font-size: 32px;
+        color: #ccc;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .stars-rating input:checked~label {
+        color: #ff9f00;
+    }
+
+    .stars-rating label:hover,
+    .stars-rating label:hover~label {
+        color: #ffc107;
+    }
+
+    .stars-rating label:active {
+        transform: scale(0.9);
+    }
+
+    .fk-textarea {
+        width: 100%;
+        border: 1px solid #e0e0e0;
+        border-radius: 2px;
+        padding: 12px;
+        font-size: 14px;
+        outline: none;
+        resize: none;
+        min-height: 120px;
+        background: #fdfdfd;
+    }
+
+    .fk-textarea:focus {
+        border-color: var(--fk-blue);
+        background: #fff;
+    }
+
+    .fk-btn-submit {
+        background: var(--fk-orange);
+        color: white;
+        border: none;
+        padding: 14px;
+        width: 100%;
+        font-weight: 500;
+        text-transform: uppercase;
+        border-radius: 2px;
+        margin-top: 15px;
+        cursor: pointer;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    .fk-btn-submit:hover {
+        background: #e65a16;
+    }
+
+    /* Chatbot Styles */
+    .chatbot-launcher {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        background: var(--fk-blue);
+        color: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        z-index: 2005;
+        transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .chatbot-launcher:hover {
+        transform: scale(1.1);
+    }
+
+    .chatbot-window {
+        position: fixed;
+        bottom: 100px;
+        right: 30px;
+        width: 350px;
+        height: 500px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 2005;
+        border: 1px solid var(--fk-border);
+        animation: chatFade 0.3s ease-out;
+    }
+
+    @keyframes chatFade {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .chatbot-header {
+        background: var(--fk-blue);
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .chatbot-messages {
+        flex: 1;
+        padding: 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: #f8f9fa;
+        scroll-behavior: smooth;
+    }
+
+    .msg {
+        max-width: 85%;
+        padding: 10px 14px;
+        border-radius: 18px;
+        font-size: 13px;
+        line-height: 1.5;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .msg-bot {
+        background: white;
+        color: #333;
+        align-self: flex-start;
+        border-bottom-left-radius: 2px;
+        border: 1px solid #eee;
+    }
+
+    .msg-user {
+        background: var(--fk-blue);
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 2px;
+    }
+
+    .chatbot-input {
+        padding: 15px;
+        background: white;
+        border-top: 1px solid #eee;
+        display: flex;
+        gap: 10px;
+    }
+
+    .chatbot-input input {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 25px;
+        padding: 8px 16px;
+        font-size: 13px;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+    .chatbot-input input:focus {
+        border-color: var(--fk-blue);
+    }
+
+    .chatbot-input button {
+        background: var(--fk-blue);
+        color: white;
+        border: none;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s;
+    }
+
+    .chatbot-input button:hover {
+        background: #1c5dc2;
+    }
+
+    .bot-typing {
+        font-style: italic;
+        font-size: 11px;
+        color: #888;
+        margin-left: 5px;
+        display: none;
+    }
+
+    @media (max-width: 576px) {
+        .chatbot-window {
+            width: 90%;
+            height: 60vh;
+            right: 5%;
+            left: 5%;
+            bottom: 90px;
+        }
+
+        .chatbot-launcher {
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="order-detail-wrapper">
+    <div class="container" style="max-width: 1100px;">
+
+        <!-- Header -->
+        <div class="summary-card">
+            <div class="d-flex align-items-center gap-3">
+                <i class="fas fa-arrow-left ps-1" style="cursor: pointer;" onclick="history.back()"></i>
+                <h6 class="mb-0 fw-bold">Order Details</h6>
+            </div>
+            <div class="d-flex gap-3">
+                <span class="text-muted small d-none d-md-inline">Order ID: ORD-{{ order.id }}</span>
+                <a href="#" class="fk-link" style="color: var(--fk-blue); font-size: 13px;">
+                    <i class="fas fa-headset"></i> Help
+                </a>
+            </div>
+        </div>
+
+        <!-- Info Grid -->
+        <div class="fk-section-row">
+            <div class="fk-card">
+                <div class="fk-card-title">Delivery Address</div>
+                <div class="addr-name">{{ order.full_name }}</div>
+                <div class="addr-text">{{ order.shipping_address }}</div>
+                <div class="addr-phone">Phone number: <span class="fw-bold">{{ order.phone_number }}</span></div>
+            </div>
+
+            <div class="fk-card">
+                <div class="fk-card-title">Payment Info</div>
+                <div class="fw-bold mb-1" style="font-size: 14px;">Cash on Delivery</div>
+                <div class="text-muted" style="font-size: 12px;">No payment required until delivery</div>
+            </div>
+
+            <div class="fk-card">
+                <div class="fk-card-title">Invoice</div>
+                <a href="{% url 'download_invoice' order.id %}" target="_blank" class="fk-link"
+                    style="justify-content: flex-start; color: var(--fk-blue);">
+                    <i class="fas fa-download"></i> Download Invoice
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Product Card -->
+        <div class="product-list-card">
+            <div class="product-item-row">
+                <!-- Col 1: Img -->
+                <div class="prod-img-box">
+                    <div class="p-2 border rounded" style="background: #fff;">
+                        <div class="c-bar collar-{{ order.design|lower }}">
+                            <div class="c-tag">
+                                {% if order.pet.qr_code_image %}
+                                <img src="{{ order.pet.qr_code_image.url }}" width="16">
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 2: Info -->
+                <div class="prod-details">
+                    <div class="prod-name">
+                        {{ order.design }} Edition Smart QR Collar Tag
+                        {% if order.status == 'Cancelled' %}
+                        <span class="text-danger fw-bold ms-2">(Cancelled)</span>
+                        {% endif %}
+                    </div>
+                    <div class="prod-sub">Color: {{ order.design }} | Assigned: {{ order.pet.name }}</div>
+                    <div class="prod-sub">Seller: PetQR India</div>
+                    <div class="prod-price">₹499</div>
+                </div>
+
+                <!-- Col 3: Price Empty for desktop spacing alignment -->
+                <div class="d-none d-md-block"></div>
+
+                <!-- Col 4: Tracking -->
+                <div class="track-container">
+                    <div class="track-stepper">
+                        <div class="track-step active">
+                            <div class="track-dot"></div>
+                            <div class="track-label">Ordered</div>
+                            <div class="track-update">{{ order.created_at|date:"M d" }}</div>
+                        </div>
+                        <div class="track-step {% if order.status != 'Pending' %}active{% endif %}">
+                            <div class="track-dot"></div>
+                            <div class="track-label">Packed</div>
+                        </div>
+                        <div
+                            class="track-step {% if order.status == 'Shipped' or order.status == 'Delivered' %}active{% endif %}">
+                            <div class="track-dot"></div>
+                            <div class="track-label">Shipped</div>
+                        </div>
+                        <div class="track-step {% if order.status == 'Delivered' %}active{% endif %}">
+                            <div class="track-dot"></div>
+                            <div class="track-label">Delivered</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Col 5: Actions -->
+                <div class="action-links">
+                    {% if order.status == 'Delivered' %}
+                    <a href="javascript:void(0)" onclick="openReviewModal()" class="fk-link"><i class="fas fa-star"
+                            style="font-size: 10px;"></i> Rate & Review Product</a>
+                    {% else %}
+                    <span class="text-muted small" title="Feedback available after delivery" style="cursor: help;">
+                        <i class="fas fa-star" style="font-size: 10px; opacity: 0.5;"></i> Rate after delivery
+                    </span>
+                    {% endif %}
+
+                    <a href="javascript:void(0)" onclick="toggleChat()" class="fk-link"><i
+                            class="fas fa-question-circle" style="font-size: 10px;"></i> Chat
+                        with us</a>
+
+                    {% if order.status == 'Pending' or order.status == 'Processing' %}
+                    <a href="{% url 'cancel_order' order.id %}" class="fk-link" style="color: var(--fk-blue);">
+                        <i class="fas fa-times" style="font-size: 10px;"></i> Cancel
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback & Review Section (Flipkart Model) -->
+        <div class="row g-3 mt-2" id="review-section">
+            <div class="col-lg-12">
+                <div class="white-card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Ratings & Reviews</h5>
+                        {% if not user_has_reviewed %}
+                        <button class="btn btn-primary btn-sm px-4 fw-bold" onclick="openReviewModal()"
+                            style="background: var(--fk-orange); border: none; font-size: 12px;">RATE PRODUCT</button>
+                        {% endif %}
+                    </div>
+
+                    <div class="row p-4 border-bottom">
+                        <div class="col-md-3 text-center border-end">
+                            <div class="display-5 fw-bold mb-1">4.5 ★</div>
+                            <div class="text-muted small">Based on community feedback</div>
+                        </div>
+                        <div class="col-md-5 px-lg-5">
+                            <!-- Simple Rating Bars -->
+                            <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 11px;">
+                                <span style="width: 30px;">5 ★</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: 80%"></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 11px;">
+                                <span style="width: 30px;">4 ★</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: 15%"></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 11px;">
+                                <span style="width: 30px;">3 ★</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar bg-success" style="width: 5%"></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 11px;">
+                                <span style="width: 30px;">2 ★</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar bg-warning" style="width: 0%"></div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 mb-1" style="font-size: 11px;">
+                                <span style="width: 30px;">1 ★</span>
+                                <div class="progress flex-grow-1" style="height: 6px;">
+                                    <div class="progress-bar bg-danger" style="width: 0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 d-flex align-items-center justify-content-center">
+                            <div class="text-center">
+                                <i class="fas fa-certificate text-primary mb-2" style="font-size: 24px;"></i>
+                                <div class="small fw-bold">100% Authentic Reviews</div>
+                                <div class="text-muted" style="font-size: 10px;">Only from verified PetQR owners</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-0">
+                        {% if design_reviews %}
+                        {% for review in design_reviews %}
+                        <div class="p-4 border-bottom review-block">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="badge bg-success" style="font-size: 11px;">{{ review.rating }} ★</span>
+                                <span class="fw-bold" style="font-size: 14px;">Highly Recommended</span>
+                            </div>
+                            <div class="review-text text-dark" style="font-size: 14px; line-height: 1.6;">
+                                "{{ review.comment }}"
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                <div class="d-flex align-items-center gap-3 text-muted" style="font-size: 12px;">
+                                    <span class="fw-bold text-dark">{{ review.user.username }}</span>
+                                    <span><i class="fas fa-check-circle me-1"></i> Certified Buyer</span>
+                                    <span>{{ review.created_at|date:"M, Y" }}</span>
+                                </div>
+                                <div class="d-flex gap-3 text-muted" style="font-size: 12px;">
+                                    <span><i class="far fa-thumbs-up"></i> Helpful</span>
+                                    <span><i class="far fa-thumbs-down"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-comment-slash text-muted opacity-25 mb-3" style="font-size: 48px;"></i>
+                            <h6 class="text-muted">No reviews yet for the {{ order.design }} edition.</h6>
+                            <p class="text-muted small">Be the first to share your experience with other pet parents!
+                            </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-12 mt-3">
+                <div class="price-side-card">
+                    <div class="price-head">Order Summary</div>
+                    <div class="price-body">
+                        <div class="price-ln">
+                            <span>Item Cost ({{ order.design }} Collar)</span>
+                            <span>₹1,299</span>
+                        </div>
+                        <div class="price-ln">
+                            <span>Loyalty Discount</span>
+                            <span class="text-success">-₹800</span>
+                        </div>
+                        <div class="price-ln">
+                            <span>Delivery Charges</span>
+                            <span class="text-success">FREE</span>
+                        </div>
+                        <div class="price-ln price-tot border-top pt-3">
+                            <h5 class="fw-bold mb-0">Total Payable</h5>
+                            <h5 class="fw-bold mb-0">₹499</h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Chat Bot Widget -->
+<div id="chatbot-window" class="chatbot-window">
+    <div class="chatbot-header">
+        <div class="d-flex align-items-center gap-2">
+            <div style="width: 10px; height: 10px; background: #4ade80; border-radius: 50%;"></div>
+            <h6 class="mb-0 fw-bold">PetQR Support Bot</h6>
+        </div>
+        <i class="fas fa-times" style="cursor: pointer;" onclick="toggleChat()"></i>
+    </div>
+    <div class="chatbot-messages" id="chatbot-messages">
+        <div class="msg msg-bot">
+            Hi <strong>{{ user.username }}</strong>! 👋 I'm your PetQR assistant. How can I help you with Order
+            <strong>#{{ order.id }}</strong> today?
+        </div>
+        <div class="msg msg-bot" style="font-size: 12px; background: #eef2ff;">
+            Try asking about:
+            <br>• Status
+            <br>• Delivery
+            <br>• Cancel Order
+        </div>
+    </div>
+    <div id="bot-typing" class="bot-typing px-3 pb-1">Bot is thinking...</div>
+    <form class="chatbot-input" id="chatbot-form">
+        <input type="text" id="chatbot-input" placeholder="Type your message..." autocomplete="off">
+        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+    </form>
+</div>
+
+<!-- Chat Trigger -->
+<div class="chatbot-launcher" id="chat-launcher" onclick="toggleChat()">
+    <i class="fas fa-comment-dots"></i>
+</div>
+
+<!-- Review Posting Modal -->
+<div id="reviewPostModal" class="fk-review-modal">
+    <div class="fk-review-content">
+        <div class="fk-review-header">
+            <h6 class="mb-0 fw-bold">Rate this product</h6>
+            <i class="fas fa-times text-muted" style="cursor: pointer;" onclick="closeReviewModal()"></i>
+        </div>
+        <div class="fk-review-body">
+            <div class="d-flex gap-3 mb-4 align-items-center">
+                <div class="p-1 border rounded" style="width: 50px;">
+                    <div class="c-bar collar-{{ order.design|lower }}" style="height: 10px;"></div>
+                </div>
+                <div class="small fw-bold">{{ order.design }} Edition Smart Tag</div>
+            </div>
+
+            <form id="submitReviewForm">
+                {% csrf_token %}
+                <input type="hidden" name="order_id" value="{{ order.id }}">
+
+                <div class="text-muted small mb-2 text-center">Rate your experience</div>
+                <div class="stars-rating justify-content-center">
+                    <input type="radio" name="rating" id="st5" value="5" required><label for="st5" class="fas fa-star"
+                        title="Excellent"></label>
+                    <input type="radio" name="rating" id="st4" value="4"><label for="st4" class="fas fa-star"
+                        title="Very Good"></label>
+                    <input type="radio" name="rating" id="st3" value="3"><label for="st3" class="fas fa-star"
+                        title="Good"></label>
+                    <input type="radio" name="rating" id="st2" value="2"><label for="st2" class="fas fa-star"
+                        title="Poor"></label>
+                    <input type="radio" name="rating" id="st1" value="1"><label for="st1" class="fas fa-star"
+                        title="Very Poor"></label>
+                </div>
+                <div class="d-flex justify-content-between text-muted px-2 mb-4" style="font-size: 10px;">
+                    <span>Very Poor</span>
+                    <span>Excellent</span>
+                </div>
+
+                <div class="text-muted small mb-2">Write a review</div>
+                <textarea name="comment" class="fk-textarea"
+                    placeholder="What did you like or dislike about the product?" required></textarea>
+
+                <button type="submit" class="fk-btn-submit">Submit Review</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openReviewModal() {
+        document.getElementById('reviewPostModal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeReviewModal() {
+        document.getElementById('reviewPostModal').style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Close on outside click
+    window.onclick = function (event) {
+        let modal = document.getElementById('reviewPostModal');
+        if (event.target == modal) { closeReviewModal(); }
+    }
+
+    // Chatbot Logic
+    const chatLauncher = document.getElementById('chat-launcher');
+    const chatWindow = document.getElementById('chatbot-window');
+    const chatForm = document.getElementById('chatbot-form');
+    const chatInput = document.getElementById('chatbot-input');
+    const chatMessages = document.getElementById('chatbot-messages');
+    const botTyping = document.getElementById('bot-typing');
+
+    function toggleChat() {
+        if (chatWindow.style.display === 'flex') {
+            chatWindow.style.display = 'none';
+        } else {
+            chatWindow.style.display = 'flex';
+            chatInput.focus();
+        }
+    }
+
+    function addMessage(text, type) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg msg-${type}`;
+        msgDiv.innerHTML = text;
+        chatMessages.appendChild(msgDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function botResponse(userText) {
+        const input = userText.toLowerCase();
+        let response = "";
+        const orderStatus = "{{ order.status }}";
+
+        botTyping.style.display = 'block';
+
+        setTimeout(() => {
+            botTyping.style.display = 'none';
+
+            if (input.includes('status')) {
+                if (orderStatus === 'Cancelled') {
+                    response = `Order <strong>#{{ order.id }}</strong> was <strong>Cancelled</strong>. If this was a mistake, please contact our support team.`;
+                } else {
+                    response = `Order <strong>#{{ order.id }}</strong> current status is: <strong>${orderStatus}</strong>. It was placed on {{ order.created_at|date:"M d, Y" }}.`;
+                }
+            } else if (input.includes('delivery') || input.includes('when')) {
+                if (orderStatus === 'Cancelled') {
+                    response = "This order has been <strong>Cancelled</strong>, so no delivery will be attempted. Feel free to place a new order!";
+                } else if (orderStatus === 'Delivered') {
+                    response = "This order was marked as <strong>Delivered</strong>. If you haven't received it yet, please let us know immediately.";
+                } else {
+                    response = "Standard delivery takes 3-5 business days. Since your order was placed on {{ order.created_at|date:'M d' }}, you should receive it soon!";
+                }
+            } else if (input.includes('cancel')) {
+                if (orderStatus === 'Cancelled') {
+                    response = "This order is already <strong>Cancelled</strong>.";
+                } else if (orderStatus === 'Delivered') {
+                    response = "This order has already been delivered and cannot be cancelled.";
+                } else if (orderStatus === 'Shipped') {
+                    response = "This order has already been shipped and cannot be cancelled during transit.";
+                } else {
+                    response = `Are you sure you want to cancel Order <strong>#{{ order.id }}</strong>? <br><br> <a href="{% url 'cancel_order' order.id %}" class="btn btn-danger btn-sm w-100 fw-bold py-2 mt-2" style="font-size: 11px;">YES, CANCEL MY ORDER</a>`;
+                }
+            } else if (input.includes('hi') || input.includes('hello')) {
+                response = "Hello! How can I help you today?";
+            } else if (input.includes('help')) {
+                response = "I can help you with order status, delivery estimates, or cancellation policies. Just ask!";
+            } else {
+                response = "I'm a simple bot, but I can tell you about your order status or delivery. For anything else, our team will contact you soon!";
+            }
+
+            addMessage(response, 'bot');
+        }, 1000);
+    }
+
+    chatForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const text = chatInput.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        chatInput.value = '';
+        botResponse(text);
+    });
+
+    // Submit logic
+    document.getElementById('submitReviewForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const btn = this.querySelector('button');
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = 'Submitting...';
+
+        fetch('{% url "submit_review" %}', {
+            method: 'POST',
+            body: new FormData(this),
+            headers: { 'X-CSRFToken': '{{ csrf_token }}' }
+        })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    alert('Review submitted successfully!');
+                    location.reload();
+                } else {
+                    alert(data.message || 'Error submitting review');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            })
+            .catch(err => {
+                console.error(err);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            });
+    });
+</script>
+{% endblock %}

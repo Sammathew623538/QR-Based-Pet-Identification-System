@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetQR Invoice - {{ order.id }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2874f0;
+            --text: #1e293b;
+            --muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text);
+            line-height: 1.5;
+            margin: 0;
+            padding: 40px;
+            background: #f8fafc;
+        }
+
+        .invoice-wrapper {
+            background: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .paid-stamp {
+            position: absolute;
+            top: 100px;
+            right: 40px;
+            border: 4px solid #16a34a;
+            color: #16a34a;
+            padding: 10px 20px;
+            font-weight: 900;
+            font-size: 24px;
+            text-transform: uppercase;
+            transform: rotate(-15deg);
+            border-radius: 8px;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .invoice-meta {
+            text-align: right;
+        }
+
+        .invoice-meta h1 {
+            margin: 0;
+            font-size: 28px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 800;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--muted);
+            letter-spacing: 1.2px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .address-box {
+            font-size: 14px;
+        }
+
+        /* Pet Profile Section */
+        .pet-info-card {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border: 1px dashed var(--primary);
+        }
+
+        .qr-thumb {
+            width: 70px;
+            height: 70px;
+            background: white;
+            padding: 5px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .pet-meta h4 {
+            margin: 0;
+            font-size: 16px;
+            color: var(--primary);
+        }
+
+        .pet-meta p {
+            margin: 4px 0 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th {
+            text-align: left;
+            background: #f8fafc;
+            padding: 12px 15px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--muted);
+            border-bottom: 2px solid var(--border);
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        .totals {
+            margin-left: auto;
+            width: 250px;
+        }
+
+        .total-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .total-line.grand {
+            border-top: 2px solid var(--primary);
+            padding-top: 12px;
+            margin-top: 10px;
+            font-weight: 800;
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .terms-box {
+            margin-top: 30px;
+            font-size: 13px;
+            padding: 15px;
+            background: #fffbeb;
+            border-left: 4px solid #f59e0b;
+            border-radius: 4px;
+        }
+
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            padding-top: 30px;
+            border-top: 1px solid var(--border);
+        }
+
+        .signature-section {
+            text-align: right;
+        }
+
+        .signature-line {
+            width: 160px;
+            border-top: 1px solid #1e293b;
+            margin: 10px 0 5px;
+            display: inline-block;
+        }
+
+        .btn-download-trigger {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(40, 116, 240, 0.3);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.3s;
+        }
+
+        .btn-download-trigger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(40, 116, 240, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .invoice-wrapper {
+                padding: 25px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .invoice-meta {
+                text-align: center;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .paid-stamp {
+                top: 20px;
+                right: 20px;
+                font-size: 14px;
+                opacity: 0.3;
+            }
+
+            .footer {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 30px;
+            }
+
+            .signature-section {
+                text-align: center;
+            }
+
+            .btn-download-trigger {
+                width: calc(100% - 60px);
+                left: 30px;
+                justify-content: center;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .invoice-wrapper {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .no-print {
+                display: none;
+            }
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+
+<body>
+    <button class="btn-download-trigger no-print" onclick="downloadPDF()">
+        <i class="fas fa-file-invoice"></i> Download Official PDF
+    </button>
+
+    <div class="invoice-wrapper" id="invoice-content">
+        <div class="paid-stamp">COD - VERIFIED</div>
+
+        <div class="header">
+            <div class="logo">● PetQR India</div>
+            <div class="invoice-meta">
+                <h1>TAX INVOICE</h1>
+                <div>Order #{{ invoice_number }}</div>
+                <div style="color: var(--muted); font-size: 13px;">Date: {{ invoice_date|date:"F d, Y" }}</div>
+            </div>
+        </div>
+
+        <div class="info-grid">
+            <div>
+                <div class="section-title">Sold By</div>
+                <div class="address-box">
+                    <strong>PetQR Recovery Systems India</strong><br>
+                    Pet Recovery H.O., Tech Park Road<br>
+                    Kochi, Kerala 682021<br>
+                    <span style="color: var(--muted)">GSTIN: 32ABCDE1234F1Z5</span>
+                </div>
+            </div>
+            <div>
+                <div class="section-title">Shipping To</div>
+                <div class="address-box">
+                    <strong>{{ order.full_name }}</strong><br>
+                    {{ order.shipping_address|linebreaksbr }}<br>
+                    <strong>Phone:</strong> +91 {{ order.phone_number }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Pet Profile Integration -->
+        <div class="pet-info-card">
+            <div class="qr-thumb">
+                {% if order.pet.qr_code_image %}
+                <img src="{{ order.pet.qr_code_image.url }}" width="60" alt="Pet QR">
+                {% else %}
+                <i class="fas fa-qrcode text-muted" style="font-size: 30px;"></i>
+                {% endif %}
+            </div>
+            <div class="pet-meta">
+                <h4>Digital profile activated for {{ order.pet.name }}</h4>
+                <p>Scan this QR code from the physical tag to view {{ order.pet.name }}'s emergency details.</p>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th style="text-align: center;">Qty</th>
+                    <th style="text-align: right;">Price</th>
+                    <th style="text-align: right;">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <strong style="color: #0f172a">{{ order.design|title }} Edition Smart QR Collar Tag</strong><br>
+                        <span style="font-size: 11px; color: var(--muted)">Lifetime digital recovery license
+                            included</span>
+                    </td>
+                    <td style="text-align: center;">01</td>
+                    <td style="text-align: right;">₹1,299.00</td>
+                    <td style="text-align: right;">₹1,299.00</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="totals">
+            <div class="total-line">
+                <span>Subtotal</span>
+                <span>₹1,299.00</span>
+            </div>
+            <div class="total-line" style="color: #16a34a">
+                <span>Loyalty Discount</span>
+                <span>-₹800.00</span>
+            </div>
+            <div class="total-line" style="color: #16a34a">
+                <span>Shipping</span>
+                <span>FREE</span>
+            </div>
+            <div class="total-line grand">
+                <span>Amount Paid</span>
+                <span>₹499.00</span>
+            </div>
+        </div>
+
+        <div class="terms-box">
+            <strong>Payment Method:</strong> Cash on Delivery (COD).<br>
+            Please handover <strong>₹499.00</strong> to the PetQR courier partner.
+        </div>
+
+        <div class="footer">
+            <div style="font-size: 11px; color: var(--muted);">
+                support@petqr.in | www.petqr.in<br>
+                Thank you for being a responsible pet parent!
+            </div>
+            <div class="signature-section">
+                <div style="font-style: italic; font-family: serif; font-size: 15px;">Official Signature</div>
+                <div class="signature-line"></div>
+                <div style="font-size: 10px; letter-spacing: 0.5px;">For PetQR India Authorized Signatory</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function downloadPDF() {
+            const element = document.getElementById('invoice-content');
+            const opt = {
+                margin: [0.5, 0.5],
+                filename: 'PetQR_Invoice_{{ order.id }}.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+            };
+
+            html2pdf().set(opt).from(element).save();
+        }
+    </script>
+</body>
+
+</html>

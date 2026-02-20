@@ -1,0 +1,286 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<style>
+    .success-container {
+        max-width: 700px;
+        margin: 60px auto;
+        padding: 40px;
+        background: white;
+        border-radius: 30px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+        text-align: center;
+    }
+
+    .success-icon-animated {
+        font-size: 80px;
+        margin-bottom: 30px;
+        display: inline-block;
+        animation: successPop 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    @keyframes successPop {
+        0% {
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    /* Collar Preview Styles */
+    .collar-success-preview {
+        margin: 30px auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .collar-mockup {
+        width: 280px;
+        height: 28px;
+        border-radius: 14px;
+        position: relative;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .collar-tag-fix {
+        width: 48px;
+        height: 48px;
+        position: absolute;
+        background: #ffffff;
+        border-radius: 50%;
+        border: 3px solid #cbd5e1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        z-index: 2;
+        overflow: hidden;
+        padding: 4px;
+    }
+
+    .collar-tag-fix::before {
+        content: "SCAN";
+        position: absolute;
+        top: 4px;
+        font-size: 6px;
+        font-weight: 800;
+        color: #475569;
+    }
+
+    .collar-tag-fix::after {
+        content: "PET SAFE";
+        position: absolute;
+        bottom: 4px;
+        font-size: 6px;
+        font-weight: 800;
+        color: #ef4444;
+    }
+
+    .collar-tag-fix img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    /* Textures */
+    .collar-classic {
+        background: #1e293b;
+        border: 1px solid #0f172a;
+    }
+
+    .collar-sporty {
+        background: #ef4444;
+        background-image: repeating-linear-gradient(90deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.1) 1px, transparent 1px, transparent 4px);
+        border: 1px solid #b91c1c;
+    }
+
+    .collar-luxury {
+        background: linear-gradient(135deg, #af8d1d, #fcd34d, #af8d1d);
+        border: 1px solid #92400e;
+    }
+
+    .collar-glow {
+        background: #4ade80;
+        box-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
+        border: 1px solid #166534;
+    }
+
+    .order-details-card {
+        background: #F8FAFC;
+        border-radius: 20px;
+        padding: 30px;
+        margin: 20px 0 40px;
+        text-align: left;
+        border: 1px solid #E2E8F0;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .detail-row:last-child {
+        border-bottom: none;
+    }
+
+    .detail-label {
+        color: var(--slate);
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .detail-value {
+        color: var(--dark);
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    .delivery-eta {
+        background: #ECFDF5;
+        color: #065F46;
+        padding: 20px;
+        border-radius: 16px;
+        margin: 30px 0;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        font-weight: 700;
+    }
+
+    .back-btn-large {
+        display: inline-block;
+        padding: 16px 40px;
+        background: var(--dark);
+        color: white;
+        text-decoration: none;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: all 0.3s;
+    }
+
+    @media (max-width: 600px) {
+        .success-container {
+            margin: 20px auto;
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        .collar-mockup {
+            transform: scale(0.9);
+        }
+
+        .back-btn-large {
+            width: 100%;
+            text-align: center;
+        }
+
+        .delivery-eta {
+            flex-direction: column;
+            text-align: center;
+            gap: 10px;
+        }
+
+        .order-details-card {
+            padding: 20px;
+        }
+
+        .detail-row {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 4px;
+        }
+
+        .detail-value {
+            text-align: left !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="success-container animate-entry">
+        <div class="success-icon-animated">🎉</div>
+        <h1 style="font-weight: 800; margin-bottom: 10px;">Order Successful!</h1>
+        <p style="color: var(--slate); font-size: 16px;">Thank you for your purchase. Your personalized collar is being
+            prepared.</p>
+
+        <!-- Dynamic Collar Preview (Click to Review) -->
+        <a href="{% url 'collar_review' order.id %}" class="collar-success-preview" title="Click to write a review!"
+            style="text-decoration: none;">
+            <div class="collar-mockup collar-{{ order.design|lower }}">
+                <div class="collar-tag-fix">
+                    {% if order.pet.qr_code_image %}
+                    <img src="{{ order.pet.qr_code_image.url }}" alt="QR Code">
+                    {% endif %}
+                </div>
+            </div>
+            <p style="font-weight: 700; color: var(--slate); margin: 0;">Your {{ order.design }} Collar Preview</p>
+            <span style="font-size: 12px; color: var(--slate); opacity: 0.7;">(Click to write a review)</span>
+        </a>
+
+        <div class="order-details-card">
+            <h4 style="font-weight: 800; margin-bottom: 20px;">Order Summary</h4>
+
+            <div class="detail-row">
+                <span class="detail-label">Order ID</span>
+                <span class="detail-value">#PQ-{{ order.id|stringformat:"05d" }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Customer Name</span>
+                <span class="detail-value">{{ order.full_name }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Phone Label</span>
+                <span class="detail-value">{{ order.phone_number }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Pet Name</span>
+                <span class="detail-value">{{ order.pet.name }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Design Selection</span>
+                <span class="detail-value">{{ order.design }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Shipping To</span>
+                <span class="detail-value" style="max-width: 250px; text-align: right;">{{ shipping_addr }}</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Payment Method</span>
+                <span class="detail-value">Cash on Delivery</span>
+            </div>
+        </div>
+
+        <div class="delivery-eta">
+            <span style="font-size: 24px;">🚚</span>
+            <div>
+                <p style="margin: 0; font-size: 13px; opacity: 0.8;">Estimated Delivery</p>
+                <p style="margin: 0;">{{ est_delivery_start|date:"d M" }} - {{ est_delivery_end|date:"d M, Y" }}</p>
+            </div>
+        </div>
+
+        <div style="margin-top: 40px;">
+            <a href="{% url 'dashboard' %}" class="back-btn-large">Go to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

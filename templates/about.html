@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Corporate Profile | PetQR Global{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/about.css' %}">
+
+{% endblock %}
+
+{% block content %}
+<main class="container">
+    <section class="hero-corp reveal">
+        <h1>Built for <span style="color: var(--primary);">Protection.</span></h1>
+        <p>Advancing global pet safety through high-integrity digital identification infrastructure.</p>
+    </section>
+
+    <section class="mission-vision-grid">
+        <div class="mv-card reveal">
+            <h2>Our Mission</h2>
+            <p>“To make every pet digitally protected and easily identifiable through seamless technology.”</p>
+        </div>
+        <div class="mv-card reveal">
+            <h2>Our Vision</h2>
+            <p>“To establish a borderless safety network where technology eliminates pet loss forever.”</p>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title reveal">Strategic Advantages</h2>
+        <div class="advantage-grid">
+            <div class="adv-card reveal">
+                <b>⚡ Rapid Recovery</b>
+                <p>Instant digital alerts the moment a pet is scanned by any smartphone.</p>
+            </div>
+            <div class="adv-card reveal">
+                <b>🛡️ Digital-First</b>
+                <p>Encrypted cloud infrastructure ensures pet data is always current and secure.</p>
+            </div>
+            <div class="adv-card reveal">
+                <b>💎 Accessible</b>
+                <p>Enterprise-grade security simplified for every pet owner worldwide.</p>
+            </div>
+        </div>
+    </section>
+
+    <section>
+        <h2 class="section-title reveal">Major Milestones</h2>
+        <div class="milestone-grid">
+            <div class="milestone-box reveal">
+                <span class="status-badge">Completed</span>
+                <h3>Project Sentinel</h3>
+                <p>Established over 500,000 localized recovery nodes across metropolitan hubs.</p>
+                <div class="box-stats">
+                    <div class="stat-unit"><b>500K+</b><span>Nodes</span></div>
+                    <div class="stat-unit"><b>40%</b><span>Efficiency</span></div>
+                </div>
+            </div>
+
+            <div class="milestone-box reveal">
+                <span class="status-badge">Completed</span>
+                <h3>Municipal Mesh</h3>
+                <p>Partnered with 200+ city governments to digitize pet licensing protocols.</p>
+                <div class="box-stats">
+                    <div class="stat-unit"><b>200+</b><span>Cities</span></div>
+                    <div class="stat-unit"><b>85%</b><span>Adoption</span></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="roadmap-section">
+        <div class="text-center reveal" style="text-align:center; margin-bottom:50px;">
+            <h2 style="font-size: 32px; font-weight: 800;">Future Roadmap</h2>
+            <p style="color: var(--slate-300);">The next evolution of our safety ecosystem.</p>
+        </div>
+        <div class="roadmap-grid">
+            <div class="roadmap-item reveal">
+                <h3>GPS Hybrid</h3>
+                <p>Hardware integration to complement our global QR notification network.</p>
+            </div>
+            <div class="roadmap-item reveal">
+                <h3>AI Vision</h3>
+                <p>Deep learning pattern recognition for scan-free identification protocols.</p>
+            </div>
+            <div class="roadmap-item reveal">
+                <h3>Med-Link</h3>
+                <p>Direct connectivity to emergency veterinary networks during recovery.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta-wrapper reveal">
+        <h2 style="margin-bottom: 25px; font-size: 32px; font-weight: 800;">Ready to secure the future?</h2>
+        <a href="{% url 'contact' %}" class="btn-primary">Contact Corporate Relations</a>
+    </section>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Enhanced Intersection Observer for better responsive triggers
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, observerOptions);
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+{% endblock %}

@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .delete-wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 80vh;
+        padding: 20px;
+        background: linear-gradient(to bottom, #ffffff, #f8fafc);
+    }
+
+    .delete-card {
+        background: white;
+        padding: 40px;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+        text-align: center;
+        max-width: 500px;
+        width: 100%;
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        animation: popIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+        from {
+            opacity: 0;
+            transform: scale(0.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    .warning-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        display: block;
+    }
+
+    h2 {
+        color: var(--dark);
+        font-weight: 800;
+        margin-bottom: 12px;
+    }
+
+    p {
+        color: var(--slate);
+        font-size: 16px;
+        margin-bottom: 30px;
+        line-height: 1.6;
+    }
+
+    .btn-danger-confirm {
+        background: #EF4444;
+        color: white;
+        padding: 14px 28px;
+        border-radius: 12px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.2s;
+        width: 100%;
+        margin-bottom: 12px;
+        display: block;
+        text-decoration: none;
+    }
+
+    .btn-danger-confirm:hover {
+        background: #DC2626;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(239, 68, 68, 0.2);
+    }
+
+    .btn-cancel {
+        display: block;
+        padding: 12px;
+        color: var(--slate);
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .btn-cancel:hover {
+        color: var(--dark);
+    }
+</style>
+
+<div class="delete-wrapper">
+    <div class="delete-card">
+        <span class="warning-icon">⚠️</span>
+        {% if pet %}
+        <h2>Delete {{ pet.name }}?</h2>
+        <p>
+            Are you sure you want to delete <strong>{{ pet.name }}</strong>?
+            This action cannot be undone.
+        </p>
+        {% elif custom_obj %}
+        <h2>{{ verb }} {{ custom_obj }}?</h2>
+        <p>
+            Are you sure you want to proceed?
+            <strong>{{ custom_obj }}</strong> will be permanently removed.
+        </p>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger-confirm">Yes, Confirm Delete</button>
+        </form>
+
+        <a href="javascript:history.back()" class="btn-cancel">Cancel</a>
+    </div>
+</div>
+{% endblock %}

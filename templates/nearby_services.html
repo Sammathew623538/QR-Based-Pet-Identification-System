@@ -1,0 +1,583 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<style>
+    :root {
+        --primary-blue: #2874f0;
+        --secondary-blue: #1e88e5;
+        --accent-orange: #fb6a1b;
+        --success-green: #388e3c;
+    }
+
+    .services-wrapper {
+        padding-top: 100px;
+        background: #f1f3f6;
+        min-height: 100vh;
+    }
+
+    .finder-container {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        margin-bottom: 50px;
+    }
+
+    .search-group {
+        display: flex;
+        gap: 10px;
+        flex-grow: 1;
+        max-width: 500px;
+    }
+
+    .address-input {
+        flex-grow: 1;
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        outline: none;
+        transition: 0.3s;
+    }
+
+    .address-input:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 3px rgba(40, 116, 240, 0.1);
+    }
+
+    .finder-header {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .finder-header h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 700;
+        color: #212121;
+    }
+
+    #map {
+        height: 60vh;
+        width: 100%;
+        z-index: 1;
+    }
+
+    .controls-panel {
+        padding: 15px 20px;
+        background: #fafafa;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        gap: 10px;
+        overflow-x: auto;
+    }
+
+    .filter-pill {
+        padding: 8px 16px;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        background: white;
+        cursor: pointer;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.2s;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .filter-pill:hover {
+        background: #f0f0f0;
+    }
+
+    .filter-pill.active {
+        background: var(--primary-blue);
+        color: white;
+        border-color: var(--primary-blue);
+    }
+
+    .results-panel {
+        padding: 20px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+
+    .service-card {
+        padding: 12px;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        gap: 15px;
+        transition: 0.2s;
+        cursor: pointer;
+        align-items: center;
+    }
+
+    .service-card:hover {
+        background: #f9f9f9;
+    }
+
+    .service-img-box {
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+        flex-shrink: 0;
+        background: #eee;
+        border: 1px solid #f0f0f0;
+    }
+
+    .service-img-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: crop;
+        transition: 0.3s;
+    }
+
+    .service-card:hover .service-img-box img {
+        transform: scale(1.1);
+    }
+
+    .service-info h6 {
+        margin-bottom: 4px;
+        font-weight: 700;
+        color: #212121;
+    }
+
+    .service-info p {
+        font-size: 13px;
+        color: #666;
+        margin-bottom: 2px;
+    }
+
+    .distance-tag {
+        font-size: 12px;
+        color: var(--success-green);
+        font-weight: 600;
+    }
+
+    .search-btn {
+        background: var(--accent-orange);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .search-btn:disabled {
+        background: #ccc;
+    }
+
+    /* Custom markers */
+    .custom-div-icon {
+        background: none;
+        border: none;
+    }
+
+    .marker-pin {
+        width: 30px;
+        height: 30px;
+        border-radius: 50% 50% 50% 0;
+        background: var(--primary-blue);
+        position: absolute;
+        transform: rotate(-45deg);
+        left: 50%;
+        top: 50%;
+        margin: -15px 0 0 -15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .marker-pin::after {
+        content: '';
+        width: 14px;
+        height: 14px;
+        margin: 8px 0 0 8px;
+        background: #fff;
+        position: absolute;
+        border-radius: 50%;
+    }
+
+    .marker-pin i {
+        transform: rotate(45deg);
+        color: white;
+        font-size: 12px;
+        z-index: 10;
+        position: relative;
+    }
+
+    .loading-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        display: none;
+    }
+
+    .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid var(--primary-blue);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 10px;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="services-wrapper">
+    <div class="container">
+        <div class="finder-container">
+            <div class="finder-header">
+                <div>
+                    <h2><i class="fas fa-map-marked-alt me-2 text-primary"></i> Find Nearby Pet Services</h2>
+                    <p class="text-muted small mb-0">Discover vets, shops, and grooming centers in your area.</p>
+                </div>
+
+                <div class="search-group">
+                    <input type="text" id="address-search" class="address-input"
+                        placeholder="Search city or area (e.g. Kochi)...">
+                    <button id="search-btn" class="search-btn" style="background: var(--primary-blue);">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+
+                <button id="locate-btn" class="search-btn">
+                    <i class="fas fa-location-arrow"></i> My Location
+                </button>
+            </div>
+
+            <div class="controls-panel">
+                <div class="filter-pill active" data-type="all">
+                    <i class="fas fa-list"></i> All
+                </div>
+                <div class="filter-pill" data-type="veterinary">
+                    <i class="fas fa-hand-holding-medical"></i> Vets
+                </div>
+                <div class="filter-pill" data-type="pet_shop">
+                    <i class="fas fa-shopping-cart"></i> Pet Shops
+                </div>
+                <div class="filter-pill" data-type="grooming">
+                    <i class="fas fa-cut"></i> Grooming
+                </div>
+            </div>
+
+            <div style="position: relative;">
+                <div id="loading" class="loading-overlay">
+                    <div class="spinner"></div>
+                    <p class="fw-bold text-primary">Finding services near you...</p>
+                </div>
+                <div id="map"></div>
+            </div>
+
+            <div class="results-panel" id="results-list">
+                <div class="text-center py-4 text-muted">
+                    <i class="fas fa-search fa-3x mb-3 opacity-25"></i>
+                    <p>Click "Use My Location" to find pet services near you.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script>
+    let map;
+    let userMarker;
+    let serviceMarkers = [];
+    let currentPos = null;
+    let allData = [];
+
+    // Initialize Map
+    function initMap() {
+        // Default center (India)
+        map = L.map('map').setView([20.5937, 78.9629], 5);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+    }
+
+    document.addEventListener('DOMContentLoaded', initMap);
+
+    // Search by Address (Nominatim Geocoding)
+    document.getElementById('search-btn').addEventListener('click', performAddressSearch);
+    document.getElementById('address-search').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') performAddressSearch();
+    });
+
+    async function performAddressSearch() {
+        const query = document.getElementById('address-search').value;
+        if (!query) return;
+
+        const btn = document.getElementById('search-btn');
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+            const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+            const results = await response.json();
+
+            if (results.length > 0) {
+                const first = results[0];
+                currentPos = { lat: parseFloat(first.lat), lng: parseFloat(first.lon) };
+
+                map.setView([currentPos.lat, currentPos.lng], 14);
+
+                if (userMarker) map.removeLayer(userMarker);
+                userMarker = L.marker([currentPos.lat, currentPos.lng], {
+                    icon: L.divIcon({
+                        className: 'custom-div-icon',
+                        html: '<div class="marker-pin" style="background:#2ecc71"><i class="fas fa-map-marker-alt"></i></div>',
+                        iconSize: [30, 42],
+                        iconAnchor: [15, 42]
+                    })
+                }).addTo(map).bindPopup(`<b>Searching near:</b><br>${first.display_name}`).openPopup();
+
+                fetchNearbyServices(currentPos.lat, currentPos.lng);
+            } else {
+                alert('Location not found. Try adding more details.');
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Error searching for location.');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="fas fa-search"></i>';
+        }
+    }
+
+    // Locate User
+    document.getElementById('locate-btn').addEventListener('click', function () {
+        if (!navigator.geolocation) {
+            alert('Geolocation is not supported by your browser');
+            return;
+        }
+
+        this.disabled = true;
+        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+        // Added enableHighAccuracy for better precision
+        navigator.geolocation.getCurrentPosition(position => {
+            currentPos = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+
+            map.setView([currentPos.lat, currentPos.lng], 15); // Zoomed in more
+
+            if (userMarker) map.removeLayer(userMarker);
+            userMarker = L.marker([currentPos.lat, currentPos.lng], {
+                icon: L.divIcon({
+                    className: 'custom-div-icon',
+                    html: '<div class="marker-pin" style="background:#2ecc71"><i class="fas fa-user"></i></div>',
+                    iconSize: [30, 42],
+                    iconAnchor: [15, 42]
+                })
+            }).addTo(map).bindPopup("<b>Your GPS Location</b>").openPopup();
+
+            fetchNearbyServices(currentPos.lat, currentPos.lng);
+
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-location-arrow"></i> My Location';
+        }, error => {
+            console.error(error);
+            alert('Unable to get your location. Please type your city in the search bar.');
+            this.disabled = false;
+            this.innerHTML = '<i class="fas fa-location-arrow"></i> My Location';
+        }, {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        });
+    });
+
+    async function fetchNearbyServices(lat, lng) {
+        document.getElementById('loading').style.display = 'flex';
+
+        // Overpass API Query
+        const radius = 5000;
+        const query = `
+            [out:json][timeout:25];
+            (
+              node["amenity"="veterinary"](around:${radius},${lat},${lng});
+              way["amenity"="veterinary"](around:${radius},${lat},${lng});
+              node["shop"="pet"](around:${radius},${lat},${lng});
+              way["shop"="pet"](around:${radius},${lat},${lng});
+              node["shop"="pet_grooming"](around:${radius},${lat},${lng});
+              way["shop"="pet_grooming"](around:${radius},${lat},${lng});
+            );
+            out body center;
+        `;
+
+        const url = 'https://overpass-api.de/api/interpreter?data=' + encodeURIComponent(query);
+
+        try {
+            const response = await fetch(url);
+            const data = await response.json();
+            allData = data.elements;
+            displayResults(allData);
+        } catch (error) {
+            console.error('Overpass Error:', error);
+            document.getElementById('results-list').innerHTML = `
+                <div class="alert alert-danger m-3">
+                    Failed to fetch data. Please check your connection.
+                </div>
+            `;
+        } finally {
+            document.getElementById('loading').style.display = 'none';
+        }
+    }
+
+    function displayResults(elements, filterType = 'all') {
+        const listContainer = document.getElementById('results-list');
+        listContainer.innerHTML = '';
+
+        serviceMarkers.forEach(m => map.removeLayer(m));
+        serviceMarkers = [];
+
+        if (elements.length === 0) {
+            listContainer.innerHTML = '<div class="text-center py-5"><i class="fas fa-search-minus fa-3x mb-3 opacity-25"></i><p>No services found within 5km.</p></div>';
+            return;
+        }
+
+        elements.forEach(el => {
+            const tags = el.tags || {};
+            const name = tags.name || "Pet Service Hub";
+            const lat = el.lat || (el.center && el.center.lat);
+            const lon = el.lon || (el.center && el.center.lon);
+
+            const phone = tags.phone || tags['contact:phone'] || null;
+            const website = tags.website || tags['contact:website'] || null;
+
+            let type = 'Other';
+            let icon = 'fa-paw';
+            let color = '#2874f0';
+            let photoUrl = "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=400&h=300&fit=crop";
+
+            if (tags.amenity === 'veterinary') {
+                type = 'veterinary';
+                icon = 'fa-hand-holding-medical';
+                color = '#e74c3c';
+                photoUrl = "https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?w=400&h=300&fit=crop";
+            } else if (tags.shop === 'pet') {
+                type = 'pet_shop';
+                icon = 'fa-shopping-cart';
+                color = '#f39c12';
+                photoUrl = "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=400&h=300&fit=crop";
+            } else if (tags.shop === 'pet_grooming') {
+                type = 'grooming';
+                icon = 'fa-cut';
+                color = '#9b59b6';
+                photoUrl = "https://images.unsplash.com/photo-1516733725897-1aa73b87c8e8?w=400&h=300&fit=crop";
+            }
+
+            if (filterType !== 'all' && type !== filterType) return;
+
+            const marker = L.marker([lat, lon], {
+                icon: L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div class="marker-pin" style="background:${color}"><i class="fas ${icon}"></i></div>`,
+                    iconSize: [30, 42],
+                    iconAnchor: [15, 42]
+                })
+            }).addTo(map).bindPopup(`
+                <div style="min-width:150px;">
+                    <b style="font-size:14px;">${name}</b><br>
+                    <span style="color:#666; font-size:12px;">${type.replace('_', ' ')}</span><br>
+                    ${phone ? `<a href="tel:${phone}" class="btn btn-sm btn-primary mt-2 text-white d-block" style="font-size:11px; padding:4px;"><i class="fas fa-phone"></i> Call Now</a>` : ''}
+                </div>
+            `);
+
+            serviceMarkers.push(marker);
+
+            const dist = calculateDistance(currentPos.lat, currentPos.lng, lat, lon).toFixed(1);
+
+            const card = document.createElement('div');
+            card.className = 'service-card';
+            card.innerHTML = `
+                <div class="service-img-box">
+                    <img src="${photoUrl}" alt="${name}">
+                </div>
+                <div class="service-info" style="flex-grow:1;">
+                    <h6 class="mb-1">${name}</h6>
+                    <p class="mb-1 text-uppercase small fw-bold text-muted" style="font-size:10px;">${type.replace('_', ' ')}</p>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="distance-tag"><i class="fas fa-map-marker-alt me-1"></i>${dist} km</span>
+                        <a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank" class="text-primary small text-decoration-none fw-bold"><i class="fas fa-directions"></i> Way</a>
+                    </div>
+                    <div class="mt-2 d-flex gap-2">
+                        ${phone ? `<a href="tel:${phone}" class="btn btn-sm btn-outline-success py-0 px-2" style="font-size:11px;"><i class="fas fa-phone"></i> Call</a>` : ''}
+                        ${website ? `<a href="${website}" target="_blank" class="btn btn-sm btn-outline-primary py-0 px-2" style="font-size:11px;"><i class="fas fa-globe"></i> Web</a>` : ''}
+                    </div>
+                </div>
+            `;
+
+            card.onclick = () => {
+                map.setView([lat, lon], 17);
+                marker.openPopup();
+                document.getElementById('map').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            };
+
+            listContainer.appendChild(card);
+        });
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371; // km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    }
+
+    // Filter Logic
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.addEventListener('click', function () {
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            displayResults(allData, this.dataset.type);
+        });
+    });
+</script>
+{% endblock %}
