@@ -1,79 +1,89 @@
-# 🐾 Smart Pet QR - Next Gen Pet Safety System
+# 🐾 Smart Pet QR - Advanced Pet Identification & Safety System
 
 ![Python](https://img.shields.io/badge/Python-3.11+-blue.svg) ![Django](https://img.shields.io/badge/Django-5.0-green.svg) ![Status](https://img.shields.io/badge/Status-Active-success.svg)
 
-## 🚀 Overview
-**Smart Pet QR** is an innovative web application engineered to bridge the gap between physical pet tags and digital identity using **IoT concepts**. Unlike traditional tags, this system generates **dynamic, trackable QR codes** that offer real-time data, location insights, and medical history access.
-
-Built with **Django**, this project demonstrates advanced backend logic including **Dynamic Image Processing**, **Real-time Geolocation**, **AI-Assisted Support Chatbot**, and **SMTP Email Notifications**.
+## 🚀 Project Overview
+**Smart Pet QR** is a full-stack web application designed to modernize pet safety. It combines **IoT concepts** with **Web Engineering** to create a seamless system where every pet gets a digital identity. The system allows owners to manage their pets, track scans in real-time, order physical tags, and generate emergency posters instantly.
 
 ---
 
-## 🔄 Project Workflow (How it Works)
-1. **Registration & Pet Profile:** 
-   - User signs up and adds their pet's details (Photo, Breed, Medical Info).
-   - The system **automatically generates a unique QR code** with the pet's photo embedded in the center.
+## 🌟 Full Feature List
 
-2. **Smart Scanning & Tracking:**
-   - Anyone scanning the QR code gets redirected to the **Public Pet Profile**.
-   - **Instant Alert:** The owner receives an **Email Notification** with the scanner's **IP Address** and **Approximate Location (City/Country)**.
+### 👤 1. User Authentication & Profile Management
+- **Secure Sign-Up/Login**: Robust authentication system using Django's built-in auth.
+- **Profile Management**: Users can update their personal details, address, and phone number.
+- **Account Deactivation**: Option for users to securely deactivate and delete their account and data.
 
-3. **Emergency 'Lost Mode':**
-   - If a pet goes missing, the owner toggles **"Lost Mode"** on their dashboard.
-   - The system instantly generates a **High-Resolution Missing Poster (PDF)** ready for printing.
+### 🐾 2. Pet Management & Safety Protocol
+- **Add & Manage Pets**: easy interface to add multiple pets with photos, breed, age, and medical notes.
+- **Dynamic QR Code Generation**:
+  - Automatically generates a unique QR code for every pet.
+  - **Custom Branding**: Embeds the pet's photo into the center of the QR code using `Pillow`.
+  - **Downloadable**: Users can download the QR code PNG to print on labels or tags.
+- **Public Pet Profile**:
+  - A privacy-focused public page accessible via scanning the QR code.
+  - Displays Owner's Contact, Emergency Number, and Medical Conditions (e.g., "Diabetic").
+  - **"Scan to Call"**: One-tap calling button for finder.
 
-4. **E-Commerce & Support:**
-   - Owners can order physical collars/tags directly.
-   - **🤖 Smart Chatbot:** An integrated AI-like chatbot helps users track orders, check delivery status, and handle cancellations instantly.
+### 📍 3. Real-Time Tracking & Emergency Alerts
+- **Smart Scan Tracking**:
+  - Records the **IP Address**, **Timestamp**, and **Approximate Location (City, Country)** of the scanner.
+  - Displays scan history on the owner's dashboard.
+- **🚨 Panic Mode ("Lost Mode")**:
+  - One-click toggle to mark a pet as "Lost".
+  - **Instant Email Alert**: Sends an immediate email notification to the owner when the QR is scanned.
+- **📄 Smart Poster Generator**:
+  - Automatically generates a high-quality **PDF Missing Poster**.
+  - Includes Pet Photo, Name, Reward Details, and QR Code.
+  - Uses `ReportLab` for pixel-perfect PDF creation.
+
+### 🏥 4. Medical Records System
+- **Digital Health Book**: Store vaccination dates, vet visits, and medical history.
+- **Critical Info Display**: Highlights life-saving information (allergies, medications) on the public profile.
+
+### 🛍️ 5. E-Commerce Module (Tag Ordering)
+- **Shop Premium Tags**: Users can order NFC/QR collars directly from the dashboard.
+- **Order Management**:
+  - **Place Order**: Select design, add shipping address, and confirm.
+  - **Order Tracking**: Visual stepper tracking (Pending -> Packed -> Shipped -> Delivered).
+  - **Cancellation**: Users can cancel orders before they are shipped.
+- **🧾 Auto-Invoice Generation**:
+  - Generates a professional PDF Invoice for every confirmed order.
+  - Downloadable directly from the Order Details page.
+- **Product Reviews**:
+  - Verified buyers can rate and review collars (Star Rating + Comments).
+  - Public review display on the product page.
+
+### 🤖 6. AI-Assisted Support Chatbot
+- **Integrated Smart Bot**: A JavaScript-based chatbot on the Order Details page.
+- **Context-Aware**:
+  - Instantly answers questions like *"Where is my order?"* or *"Can I cancel?"*.
+  - Fetches real-time status of the specific order being viewed.
+
+### 👮 7. Staff & Admin Dashboard
+- **Dedicated Staff Portal**: Restricted area for admins and staff.
+- **Stats Overview**: View total Users, Pets, and Scans today.
+- **User Management**: Staff can view, edit, or delete user accounts.
+- **Order Processing**: Staff can update order statuses (e.g., mark as "Shipped").
 
 ---
 
-## 🌟 Key Features
+## 🛠️ Technical Stack & Libraries
 
-### 1. 🛡️ Intelligent QR Code Generation
-- **Automated Design**: Upon registration, the system automatically generates a unique QR code using `Python` & `Pillow`.
-- **Custom Branding**: The pet’s profile photo is cropped into a circular format and embedded directly into the center of the high-redundancy QR code.
-
-### 2. 📍 Smart Scan Tracking & Alerts
-- **Real-Time Geolocation**: Records the **Timestamp** and **Approximate Location** based on the scanner's IP address.
-- **📩 Email Notifications**: Uses **Django SMTP** to instantly email the owner when their pet is scanned.
-- **Owner Dashboard**: Owners can view a history of all scan attempts to track their pet's last known location.
-
-### 3. 🤖 AI-Assisted Chatbot Support
-- **Instant Order Help**: A built-in JavaScript chatbot on the order page assists users.
-- **Smart Responses**: Capable of answering queries about **Order Status**, **Delivery Estimates**, and **Cancellation Policies** dynamically based on the specific order's state.
-
-### 4. 🚨 "Lost Mode" Protocol
-- **One-Click Activation**: Pet owners can toggle "Lost Mode" instantly.
-- **Auto-Generated Assets**: The system uses `ReportLab` to generate a printable **PDF Missing Poster** pre-filled with the pet's photo, contact details, and QR code.
-
-### 5. 🏥 Comprehensive Medical Profile
-- **Medical Info**: Public profile displays critical medical conditions (e.g., "Needs Insulin") and vet contact info.
-- **Secure Authentication**: Robust user profile management with secure login/logout.
-
-### 6. 🛒 Integrated E-Commerce & Staff Dashboard
-- **Order System**: A specialized module for ordering physical NFC/QR tags.
-- **Invoice Generation**: Automatic PDF invoice generation for every order.
-- **Staff Control**: Role-based access control for admins to manage users and pets.
-
----
-
-## 🛠️ Technology Stack
-
-| Component | Technology | Description |
+| Category | Technology Used | Purpose |
 | :--- | :--- | :--- |
-| **Backend** | **Django 5.0** (Python) | Robust, scalable web framework |
-| **Chatbot** | **JavaScript (ES6)** | Frontend-based smart assistant |
-| **Email** | **Django SMTP** | System for sending real-time alerts |
-| **Database** | **SQLite** (Dev) | Relational data management |
-| **Image Processing** | **Pillow (PIL)** | Dynamic image manipulation |
-| **PDF Generation** | **ReportLab** | Programmatic PDF creation |
-| **Geolocation** | **Requests & IP-API** | IP-to-Location conversion service |
-| **Frontend** | **HTML5, CSS3, Bootstrap 5** | Responsive, mobile-first interface |
+| **Backend Framework** | **Django 5.0 (Python)** | Core logic, routing, and database ORM |
+| **Database** | **SQLite** (Dev) | Lightweight relational database |
+| **Frontend** | **HTML5, CSS3, Bootstrap 5** | Responsive, mobile-first UI |
+| **Image Processing** | **Pillow (PIL)** | generating QR codes with embedded images |
+| **PDF Engine** | **ReportLab** | Generating Missing Posters and Invoices |
+| **Geolocation** | **Requests & ip-api** | converting Scanner IP to physical location |
+| **Email Service** | **Django SMTP** | Sending security alerts |
+| **Scripting** | **JavaScript (ES6)** | Chatbot logic and dynamic UI interactions |
 
 ---
 
-## 🔧 Installation & Setup
+## ⚙️ Installation Guide
 
 1. **Clone the Repository**
    ```bash
